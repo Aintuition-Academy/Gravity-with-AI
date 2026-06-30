@@ -11,6 +11,7 @@ import CPFGraph from './components/CPFGraph';
 import RSEquilibriumGraph from './components/RSEquilibriumGraph';
 import DFSGraph from './components/DFSGraph';
 import ComparativeStaticsGraph from './components/ComparativeStaticsGraph';
+import GainsFromTradeGraph from './components/GainsFromTradeGraph';
 import { HelpCircle, RefreshCw, Sparkles, BookOpen, Layers, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function App() {
@@ -186,13 +187,13 @@ export default function App() {
                   To model this mathematically, we define the **unit labor requirement** (denoted by <em>a₁</em> for Manufacturing and <em>a₂</em> for Agriculture) as:
                 </p>
                 <div className="math-formula">
-                  Unit Labor Requirement = Labor hours needed to produce 1 unit of a good
+                  Unit labor requirement: labor needed to produce 1 unit = Labor hours needed to produce 1 unit of a good
                 </div>
                 <p>
                   **Labor productivity** is the exact mathematical inverse. It represents how many units of a good a single unit of labor can produce:
                 </p>
                 <div className="math-formula">
-                  Labor Productivity = 1 / a<sub>i</sub>
+                  Productivity: output produced by 1 unit of labor = 1 / Unit labor requirement
                 </div>
 
                 <div style={{ margin: '20px 0', border: '1px solid var(--card-border)', borderRadius: 'var(--border-radius-md)', overflow: 'hidden' }}>
@@ -242,11 +243,15 @@ export default function App() {
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
                     <div className="calc-result">
-                      Mfg Productivity: {calcProd1} units/hr
+                      Mfg Productivity (1/a₁): {calcProd1} units/hr
                     </div>
                     <div className="calc-result" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)', color: 'var(--accent-primary)' }}>
-                      Agri Productivity: {calcProd2} units/hr
+                      Agri Productivity (1/a₂): {calcProd2} units/hr
                     </div>
+                  </div>
+                  
+                  <div style={{ marginTop: '15px', padding: '8px', backgroundColor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    <strong>💡 What to notice:</strong> A lower unit labor requirement means higher productivity.
                   </div>
                 </div>
               </div>
@@ -308,24 +313,24 @@ export default function App() {
 
               {/* Lesson 4 */}
               <div className="lesson-card" id="lesson4">
-                <h3>Lesson 4: Opportunity Cost</h3>
+                <h3>Lesson 4: Opportunity Cost and Comparative Advantage</h3>
                 <p>
                   Opportunity cost measures what you give up. To produce one unit of Manufacturing (which takes <em>a₁</em> hours of labor), Home must redirect labor from Agriculture, meaning it gives up:
                 </p>
                 <div className="math-formula">
-                  Home Opportunity Cost of Mfg = a₁ / a₂ (units of Agriculture given up)
+                  Home opportunity cost of Manufacturing = a₁ / a₂ (units of Agriculture given up)
                 </div>
                 <div className="math-formula" style={{ marginLeft: '12px' }}>
-                  Foreign Opportunity Cost of Mfg = a₁* / a₂* (units of Agriculture given up)
+                  Foreign opportunity cost of Manufacturing = a₁* / a₂* (units of Agriculture given up)
                 </div>
                 <p>
                   Similarly, to produce one unit of Agriculture, the opportunity cost in terms of Manufacturing given up is:
                 </p>
                 <div className="math-formula">
-                  Home Opportunity Cost of Agri = a₂ / a₁
+                  Home opportunity cost of Agriculture = a₂ / a₁ (units of Manufacturing given up)
                 </div>
                 <div className="math-formula" style={{ marginLeft: '12px' }}>
-                  Foreign Opportunity Cost of Agri = a₂* / a₁*
+                  Foreign opportunity cost of Agriculture = a₂* / a₁* (units of Manufacturing given up)
                 </div>
 
                 {/* Interactive Sliders Panel */}
@@ -371,17 +376,23 @@ export default function App() {
                 {/* CA determination box */}
                 <div style={{ padding: '16px', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 'var(--border-radius-md)' }}>
                   <h5 style={{ color: 'var(--accent-success)', marginBottom: '8px' }}>Comparative Advantage Results (Dynamic)</h5>
-                  <ul style={{ listStyleType: 'none', paddingLeft: 0, fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <li>• Home opportunity cost of Mfg: <strong>{oppH.toFixed(2)}</strong> units of Agri</li>
-                    <li>• Foreign opportunity cost of Mfg: <strong>{oppF.toFixed(2)}</strong> units of Agri</li>
+                  <ul style={{ listStyleType: 'none', paddingLeft: 0, fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <li>• Home opportunity cost of Manufacturing (a₁/a₂): <strong>{oppH.toFixed(2)}</strong> units of Agri</li>
+                    <li>• Foreign opportunity cost of Manufacturing (a₁*/a₂*): <strong>{oppF.toFixed(2)}</strong> units of Agri</li>
+                    <li>• Home opportunity cost of Agriculture (a₂/a₁): <strong>{(1/oppH).toFixed(2)}</strong> units of Mfg</li>
+                    <li>• Foreign opportunity cost of Agriculture (a₂*/a₁*): <strong>{(1/oppF).toFixed(2)}</strong> units of Mfg</li>
                     <li style={{ marginTop: '8px', fontWeight: '600' }}>
                       👉 {oppH < oppF 
-                        ? "Home has comparative advantage in Manufacturing, Foreign in Agriculture."
+                        ? "Home has comparative advantage in Manufacturing, Foreign has comparative advantage in Agriculture."
                         : oppH > oppF 
-                          ? "Foreign has comparative advantage in Manufacturing, Home in Agriculture."
+                          ? "Foreign has comparative advantage in Manufacturing, Home has comparative advantage in Agriculture."
                           : "Both countries have equal opportunity costs; neither holds a comparative advantage."}
                     </li>
                   </ul>
+                  
+                  <div style={{ marginTop: '12px', padding: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '6px', fontSize: '0.85rem' }}>
+                    <strong>💡 What to notice:</strong> The country with the lower opportunity cost has comparative advantage in that good.
+                  </div>
                 </div>
               </div>
 
@@ -558,9 +569,13 @@ export default function App() {
                 <div style={{ margin: '20px 0', padding: '16px', background: 'rgba(var(--bg-color), 0.3)', border: '1px solid var(--card-border)', borderRadius: 'var(--border-radius-md)' }}>
                   <h5 style={{ marginBottom: '8px', color: 'var(--accent-primary)' }}>Autarky vs. Free Trade Bundle Comparison</h5>
                   <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    - **Autarky**: If Home needs 50 units of Mfg and 25 units of Agri, it must allocate labor to both. It is strictly limited by the PPF.<br />
-                    - **Free Trade**: Home specializes in Mfg. It produces 100 units of Mfg, keeps 50, and trades 50 to Foreign for Agri at price P₁/P₂ = 1.2, importing 60 units of Agri! Consumers consume 50 Mfg and 60 Agri—far exceeding the 25 Agri possible under autarky!
+                    - <strong>A (Autarky bundle)</strong>: The country splits labor between both sectors and consumes exactly what it produces. It is restricted to the PPF boundary.<br />
+                    - <strong>B (Free Trade bundle)</strong>: The country specializes in its comparative advantage sector and trades at world prices P₁/P₂. The free trade bundle B lies outside the PPF on the higher CPF curve, yielding more total consumption.
                   </p>
+                </div>
+
+                <div className="graph-side-by-side" style={{ gridTemplateColumns: '1fr' }}>
+                  <GainsFromTradeGraph L={homeL} a1={homeA1} a2={homeA2} worldPrice={worldPrice} theme={theme} />
                 </div>
               </div>
 

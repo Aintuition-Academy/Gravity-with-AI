@@ -278,18 +278,7 @@ export default function Module2({ theme, setActiveTab }) {
 
           {/* ─── Lesson 3: Factor Abundance ─── */}
           <div className="lesson-card" id="m2-lesson3">
-            <h3>Lesson 3: Factor Abundance</h3>
-            <p>
-              Factor abundance means a country has <strong>relatively more</strong> of one factor compared to another country.
-              We do not just count absolute amounts — we compare <strong>ratios</strong>.
-            </p>
-            <div className="math-formula">Capital-Labor Ratio = K / L</div>
-            <p>
-              If Home has a <strong>lower</strong> K/L ratio than Foreign, Home is <strong>relatively labor-abundant</strong>.
-              If Foreign has a <strong>higher</strong> K/L ratio than Home, Foreign is <strong>relatively capital-abundant</strong>.
-            </p>
-
-            {/* Interactive Calculator */}
+                     {/* Interactive Calculator */}
             <div className="interactive-calc">
               <h4 style={{ fontSize: '1rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>🧭 Interactive Calculator: Factor Abundance</span>
@@ -299,49 +288,75 @@ export default function Module2({ theme, setActiveTab }) {
               </h4>
               <div className="calc-row">
                 <div className="calc-input-wrapper">
-                  <label>Home Labor (L):</label>
+                  <label>Home Labor (L) (workers):</label>
                   <input type="number" className="calc-input" value={homeLabor} min="1" onChange={e => setHomeLabor(Math.max(1, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Home Capital (K):</label>
+                  <label>Home Capital (K) (machines):</label>
                   <input type="number" className="calc-input" value={homeCapital} min="0" onChange={e => setHomeCapital(Math.max(0, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Foreign Labor (L*):</label>
+                  <label>Foreign Labor (L*) (workers):</label>
                   <input type="number" className="calc-input" value={foreignLabor} min="1" onChange={e => setForeignLabor(Math.max(1, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Foreign Capital (K*):</label>
+                  <label>Foreign Capital (K*) (machines):</label>
                   <input type="number" className="calc-input" value={foreignCapital} min="0" onChange={e => setForeignCapital(Math.max(0, Number(e.target.value)))} />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
-                <div className="calc-result">Home K/L: <strong>{homeKL.toFixed(3)}</strong></div>
+                <div className="calc-result">Home Capital-Labor Ratio (K/L): <strong>{homeKL.toFixed(3)}</strong></div>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.2)', color: 'var(--accent-warning)' }}>
-                  Foreign K/L: <strong>{foreignKL.toFixed(3)}</strong>
+                  Foreign Capital-Labor Ratio (K*/L*): <strong>{foreignKL.toFixed(3)}</strong>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--accent-success)' }}>
-                  Labor-abundant: <strong>{laborAbundant}</strong>
+                  Home is relatively: <strong>{homeKL < foreignKL ? 'Labor-abundant' : 'Capital-abundant'}</strong>
                 </div>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', borderColor: 'rgba(139, 92, 246, 0.2)', color: 'var(--accent-secondary)' }}>
-                  Capital-abundant: <strong>{capitalAbundant}</strong>
+                  Foreign is relatively: <strong>{foreignKL < homeKL ? 'Labor-abundant' : 'Capital-abundant'}</strong>
                 </div>
               </div>
 
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '12px', fontStyle: 'italic' }}>
+                <strong>📊 What this graph shows:</strong> Comparing the Capital-to-Labor ratio (K/L) of Home and Foreign to identify which country has a relative abundance of capital vs labor.
+              </p>
               {/* Bar Chart */}
               <PlotlyChart
                 data={[
-                  { x: ['Home K/L', 'Foreign K/L'], y: [homeKL, foreignKL], type: 'bar', marker: { color: ['#3b82f6', '#f59e0b'] } }
+                  { 
+                    x: ['Home', 'Foreign'], 
+                    y: [homeKL, foreignKL], 
+                    type: 'bar', 
+                    marker: { color: ['#3b82f6', '#f59e0b'] },
+                    customdata: [
+                      [homeCapital, homeLabor, homeKL < foreignKL ? 'Labor-abundant (lower K/L)' : 'Capital-abundant (higher K/L)'],
+                      [foreignCapital, foreignLabor, foreignKL < homeKL ? 'Labor-abundant (lower K/L)' : 'Capital-abundant (higher K/L)']
+                    ],
+                    hovertemplate: '<b>%{x}</b><br>' +
+                                   'Capital-Labor Ratio (K/L): %{y:.3f}<br>' +
+                                   'Total Capital (K): %{customdata[0]} units<br>' +
+                                   'Total Labor (L): %{customdata[1]} workers<br>' +
+                                   'Abundance Status: %{customdata[2]}<extra></extra>'
+                  }
                 ]}
-                layout={{ ...baseLayout, title: { text: 'Capital-Labor Ratios', font: { size: 14, ...plotFont } }, yaxis: { ...baseLayout.yaxis, title: 'K/L Ratio' }, height: 300 }}
+                layout={{ 
+                  ...baseLayout, 
+                  title: { text: '<b>Factor Abundance: Comparing Capital per Worker</b>', font: { size: 14, ...plotFont } }, 
+                  xaxis: { ...baseLayout.xaxis, title: 'Country' },
+                  yaxis: { ...baseLayout.yaxis, title: 'Capital-labor ratio (K/L)' }, 
+                  height: 300 
+                }}
                 style={{ width: '100%', height: '300px', marginTop: '12px' }}
               />
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> A country can have more capital in total but still not be capital-abundant if it also has a very large labor force. Abundance is relative.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                The country with the lower K/L ratio is relatively labor-abundant. The country with the higher K/L ratio is relatively capital-abundant. A country can have more capital in total but still not be capital-abundant if it also has a very large labor force. Abundance is relative.
+              </p>
             </div>
           </div>
 
@@ -367,48 +382,74 @@ export default function Module2({ theme, setActiveTab }) {
               </h4>
               <div className="calc-row">
                 <div className="calc-input-wrapper">
-                  <label>Good 1 — Labor:</label>
+                  <label>Good 1 — Labor (workers):</label>
                   <input type="number" className="calc-input" value={g1Labor} min="1" onChange={e => setG1Labor(Math.max(1, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Good 1 — Capital:</label>
+                  <label>Good 1 — Capital (machines):</label>
                   <input type="number" className="calc-input" value={g1Capital} min="0" onChange={e => setG1Capital(Math.max(0, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Good 2 — Labor:</label>
+                  <label>Good 2 — Labor (workers):</label>
                   <input type="number" className="calc-input" value={g2Labor} min="1" onChange={e => setG2Labor(Math.max(1, Number(e.target.value)))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Good 2 — Capital:</label>
+                  <label>Good 2 — Capital (machines):</label>
                   <input type="number" className="calc-input" value={g2Capital} min="0" onChange={e => setG2Capital(Math.max(0, Number(e.target.value)))} />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
-                <div className="calc-result">Good 1 K/L: <strong>{g1KL.toFixed(3)}</strong></div>
+                <div className="calc-result">Good 1 Capital-Labor Ratio (K/L): <strong>{g1KL.toFixed(3)}</strong></div>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.2)', color: 'var(--accent-warning)' }}>
-                  Good 2 K/L: <strong>{g2KL.toFixed(3)}</strong>
+                  Good 2 Capital-Labor Ratio (K/L): <strong>{g2KL.toFixed(3)}</strong>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--accent-success)' }}>
-                  Labor-intensive: <strong>{laborIntensive}</strong>
+                  Good 1 is: <strong>{g1KL < g2KL ? 'Labor-intensive' : 'Capital-intensive'}</strong>
                 </div>
                 <div className="calc-result" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', borderColor: 'rgba(139, 92, 246, 0.2)', color: 'var(--accent-secondary)' }}>
-                  Capital-intensive: <strong>{capitalIntensive}</strong>
+                  Good 2 is: <strong>{g2KL < g1KL ? 'Labor-intensive' : 'Capital-intensive'}</strong>
                 </div>
               </div>
 
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '12px', fontStyle: 'italic' }}>
+                <strong>📊 What this graph shows:</strong> Comparing the Capital-to-Labor intensity ratio (K/L) used in the production of Good 1 and Good 2 to identify which good is labor-intensive vs capital-intensive.
+              </p>
               <PlotlyChart
                 data={[
-                  { x: ['Good 1 K/L', 'Good 2 K/L'], y: [g1KL, g2KL], type: 'bar', marker: { color: ['#10b981', '#8b5cf6'] } }
+                  { 
+                    x: ['Good 1', 'Good 2'], 
+                    y: [g1KL, g2KL], 
+                    type: 'bar', 
+                    marker: { color: ['#10b981', '#8b5cf6'] },
+                    customdata: [
+                      [g1Capital, g1Labor, g1KL < g2KL ? 'Labor-intensive (lower K/L)' : 'Capital-intensive (higher K/L)'],
+                      [g2Capital, g2Labor, g2KL < g1KL ? 'Labor-intensive (lower K/L)' : 'Capital-intensive (higher K/L)']
+                    ],
+                    hovertemplate: '<b>%{x}</b><br>' +
+                                   'Production K/L Ratio: %{y:.3f}<br>' +
+                                   'Capital used: %{customdata[0]} units<br>' +
+                                   'Labor used: %{customdata[1]} workers<br>' +
+                                   'Intensity: %{customdata[2]}<extra></extra>'
+                  }
                 ]}
-                layout={{ ...baseLayout, title: { text: 'Factor Intensity Comparison', font: { size: 14, ...plotFont } }, yaxis: { ...baseLayout.yaxis, title: 'K/L Ratio' }, height: 300 }}
+                layout={{ 
+                  ...baseLayout, 
+                  title: { text: '<b>Factor Intensity: Comparing Goods by Capital per Worker</b>', font: { size: 14, ...plotFont } }, 
+                  xaxis: { ...baseLayout.xaxis, title: 'Good' },
+                  yaxis: { ...baseLayout.yaxis, title: 'Capital-labor ratio used in production (K/L)' }, 
+                  height: 300 
+                }}
                 style={{ width: '100%', height: '300px', marginTop: '12px' }}
               />
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> The good with the lower K/L ratio is more labor-intensive. The good with the higher K/L ratio is more capital-intensive.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                The good with the lower K/L ratio is more labor-intensive. The good with the higher K/L ratio is more capital-intensive.
+              </p>
             </div>
           </div>
 
@@ -425,11 +466,11 @@ export default function Module2({ theme, setActiveTab }) {
 
             <div className="prediction-box">
               <h4 style={{ marginBottom: '12px' }}>🔮 HO Prediction (from your calculator values)</h4>
-              <p>
-                <strong>{laborAbundant}</strong> is labor-abundant and <strong>{laborIntensive}</strong> is labor-intensive → <strong>{laborAbundant}</strong> is predicted to export <strong>{laborIntensive}</strong>.
+              <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
+                • Home is relatively <strong>{homeKL < foreignKL ? 'labor-abundant' : 'capital-abundant'}</strong> (abundant resource: {homeKL < foreignKL ? 'Labor' : 'Capital'}), so it is predicted to export the <strong>{homeKL < foreignKL ? 'labor-intensive' : 'capital-intensive'}</strong> good (<strong>{laborIntensive}</strong>).
               </p>
-              <p>
-                <strong>{capitalAbundant}</strong> is capital-abundant and <strong>{capitalIntensive}</strong> is capital-intensive → <strong>{capitalAbundant}</strong> is predicted to export <strong>{capitalIntensive}</strong>.
+              <p style={{ fontSize: '0.95rem', lineHeight: '1.5', marginTop: '8px' }}>
+                • Foreign is relatively <strong>{foreignKL < homeKL ? 'labor-abundant' : 'capital-abundant'}</strong> (abundant resource: {foreignKL < homeKL ? 'Labor' : 'Capital'}), so it is predicted to export the <strong>{foreignKL < homeKL ? 'labor-intensive' : 'capital-intensive'}</strong> good (<strong>{capitalIntensive}</strong>).
               </p>
             </div>
             <TutorTip tip="Match the country's abundant resource with the good that uses that resource most heavily." />
@@ -495,7 +536,7 @@ export default function Module2({ theme, setActiveTab }) {
             </p>
             <div className="math-formula">Labor cost share: θ<sub>L</sub> = wL / c</div>
             <div className="math-formula">Capital cost share: θ<sub>K</sub> = rK / c</div>
-            <div className="math-formula">θ<sub>L</sub> + θ<sub>K</sub> = 1</div>
+            <div className="math-formula">Total unit cost formula: c = wL + rK</div>
 
             <div className="interactive-calc">
               <h4 style={{ fontSize: '1rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -507,8 +548,8 @@ export default function Module2({ theme, setActiveTab }) {
               <div className="calc-row">
                 <div className="calc-input-wrapper"><label>Wage (w):</label><input type="number" className="calc-input" value={csWage} min="0.1" step="1" onChange={e => setCsWage(Math.max(0.1, Number(e.target.value)))} /></div>
                 <div className="calc-input-wrapper"><label>Rental rate (r):</label><input type="number" className="calc-input" value={csRent} min="0.1" step="1" onChange={e => setCsRent(Math.max(0.1, Number(e.target.value)))} /></div>
-                <div className="calc-input-wrapper"><label>Labor used (L):</label><input type="number" className="calc-input" value={csLabor} min="0.1" step="0.5" onChange={e => setCsLabor(Math.max(0.1, Number(e.target.value)))} /></div>
-                <div className="calc-input-wrapper"><label>Capital used (K):</label><input type="number" className="calc-input" value={csCapitalAmt} min="0.1" step="0.5" onChange={e => setCsCapitalAmt(Math.max(0.1, Number(e.target.value)))} /></div>
+                <div className="calc-input-wrapper"><label>Labor used (L) (hours):</label><input type="number" className="calc-input" value={csLabor} min="0.1" step="0.5" onChange={e => setCsLabor(Math.max(0.1, Number(e.target.value)))} /></div>
+                <div className="calc-input-wrapper"><label>Capital used (K) (hours):</label><input type="number" className="calc-input" value={csCapitalAmt} min="0.1" step="0.5" onChange={e => setCsCapitalAmt(Math.max(0.1, Number(e.target.value)))} /></div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '12px' }}>
                 <div className="calc-result">Total cost c: <strong>{csTotalCost.toFixed(2)}</strong></div>
@@ -524,24 +565,34 @@ export default function Module2({ theme, setActiveTab }) {
                 </div>
               </div>
 
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '12px', fontStyle: 'italic' }}>
+                <strong>📊 What this graph shows:</strong> The division of total unit production cost (c = wL + rK) between labor payments (wL) and capital payments (rK).
+              </p>
               {/* Pie chart */}
               <PlotlyChart
                 data={[{
-                  values: [csLaborShare, csCapitalShare],
+                  values: [csWage * csLabor, csRent * csCapitalAmt],
                   labels: ['Labor Share (θL)', 'Capital Share (θK)'],
                   type: 'pie',
                   marker: { colors: ['#3b82f6', '#8b5cf6'] },
                   textinfo: 'label+percent',
                   textfont: { color: '#fff', size: 13 },
+                  hovertemplate: '<b>%{label}</b><br>' +
+                                 'Cost Share percentage: %{percent}<br>' +
+                                 'Factor payment: %{value:.2f} units<br>' +
+                                 '<extra></extra>',
                   hole: 0.4
                 }]}
-                layout={{ ...baseLayout, title: { text: 'Cost Share Breakdown', font: { size: 14, ...plotFont } }, height: 320, showlegend: false }}
+                layout={{ ...baseLayout, title: { text: '<b>Cost Shares in Unit Production</b>', font: { size: 14, ...plotFont } }, height: 320, showlegend: false }}
                 style={{ width: '100%', height: '320px', marginTop: '12px' }}
               />
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> If most of the cost goes to labor, the industry is more sensitive to wage changes. If most of the cost goes to capital, it is more sensitive to rent changes.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                The larger the cost share of a factor, the more strongly that factor’s price affects unit cost. If most of the cost goes to labor, the industry is more sensitive to wage changes. If most of the cost goes to capital, it is more sensitive to rent changes.
+              </p>
             </div>
           </div>
 
@@ -584,10 +635,44 @@ export default function Module2({ theme, setActiveTab }) {
               <div className="calc-result" style={{ marginTop: '12px', fontSize: '1.05rem', textAlign: 'center' }}>
                 ĉ = {(hatThetaK * 100).toFixed(0)}% × {hatRentChange}% + {(hatThetaL * 100).toFixed(0)}% × {hatWageChange}% = <strong>{hatCostChange.toFixed(2)}%</strong>
               </div>
+              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                Calculation step: Unit cost change = capital share × rent change + labor share × wage change
+              </div>
+
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '16px', fontStyle: 'italic' }}>
+                <strong>📊 What this graph shows:</strong> Compares the input factor price changes (ŵ and r̂) against the calculated output unit cost change (ĉ) based on the cost share weights.
+              </p>
+              <PlotlyChart
+                data={[{
+                  x: ['Rent Change (r̂)', 'Wage Change (ŵ)', 'Unit Cost Change (ĉ)'],
+                  y: [hatRentChange, hatWageChange, hatCostChange],
+                  type: 'bar',
+                  marker: { color: ['#8b5cf6', '#3b82f6', '#10b981'] },
+                  customdata: [
+                    `Rent changed by ${hatRentChange}% (Capital share θK = ${(hatThetaK * 100).toFixed(0)}%)`,
+                    `Wage changed by ${hatWageChange}% (Labor share θL = ${(hatThetaL * 100).toFixed(0)}%)`,
+                    `Unit cost changed by ${hatCostChange.toFixed(2)}% (ĉ = θK r̂ + θL ŵ)`
+                  ],
+                  hovertemplate: '<b>%{x}</b><br>' +
+                                 'Percentage Change: %{y:.2f}%<br>' +
+                                 'Interpretation: %{customdata}<extra></extra>'
+                }]}
+                layout={{
+                  ...baseLayout,
+                  title: { text: '<b>Hat Algebra: How Factor Price Changes Affect Unit Cost</b>', font: { size: 14, ...plotFont } },
+                  xaxis: { ...baseLayout.xaxis, title: 'Component' },
+                  yaxis: { ...baseLayout.yaxis, title: 'Percentage change (%)' },
+                  height: 300
+                }}
+                style={{ width: '100%', height: '300px', marginTop: '12px' }}
+              />
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> If labor has a larger cost share, wage changes affect unit cost more strongly.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                If labor has a larger cost share, wage changes will move unit cost more strongly. If capital has a larger cost share, rent changes will move it more strongly.
+              </p>
             </div>
           </div>
         </div>
@@ -689,24 +774,24 @@ export default function Module2({ theme, setActiveTab }) {
               </h4>
               <div className="calc-row">
                 <div className="calc-input-wrapper">
-                  <label>Mfg price change (%):</label>
+                  <label>Mfg price change (p̂₁) (%):</label>
                   <input type="number" className="calc-input" value={ssPriceChange1} step="1" onChange={e => setSsPriceChange1(Number(e.target.value))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Agri price change (%):</label>
+                  <label>Agri price change (p̂₂) (%):</label>
                   <input type="number" className="calc-input" value={ssPriceChange2} step="1" onChange={e => setSsPriceChange2(Number(e.target.value))} />
                 </div>
               </div>
               <div className="calc-row" style={{ marginTop: '12px' }}>
                 <div className="calc-input-wrapper">
-                  <label>θ<sub>U1</sub> (Mfg unskilled share):</label>
+                  <label>θ<sub>U1</sub> (Mfg unskilled cost share):</label>
                   <input type="range" className="control-slider" min="0.01" max="0.99" step="0.01" value={ssThetaU1} onChange={e => setSsThetaU1(Number(e.target.value))} />
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>θ<sub>U1</sub>={ssThetaU1.toFixed(2)}, θ<sub>S1</sub>={ssThetaS1.toFixed(2)}</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>θ<sub>U1</sub>={ssThetaU1.toFixed(2)} (unskilled), θ<sub>S1</sub>={ssThetaS1.toFixed(2)} (skilled)</span>
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>θ<sub>U2</sub> (Agri unskilled share):</label>
+                  <label>θ<sub>U2</sub> (Agri unskilled cost share):</label>
                   <input type="range" className="control-slider" min="0.01" max="0.99" step="0.01" value={ssThetaU2} onChange={e => setSsThetaU2(Number(e.target.value))} />
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>θ<sub>U2</sub>={ssThetaU2.toFixed(2)}, θ<sub>S2</sub>={ssThetaS2.toFixed(2)}</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>θ<sub>U2</sub>={ssThetaU2.toFixed(2)} (unskilled), θ<sub>S2</sub>={ssThetaS2.toFixed(2)} (skilled)</span>
                 </div>
               </div>
 
@@ -722,7 +807,7 @@ export default function Module2({ theme, setActiveTab }) {
                   color: ssSkilledChange >= 0 ? 'var(--accent-success)' : 'var(--accent-error)',
                   fontSize: '1.1rem'
                 }}>
-                  Skilled wage change (ŵ<sub>S</sub>): <strong>{ssSkilledChange.toFixed(1)}%</strong>
+                  Skilled wage change (ŵ<sub>S</sub>): <strong>{ssSkilledChange >= 0 ? '+' : ''}{ssSkilledChange.toFixed(1)}%</strong>
                 </div>
                 <div className="calc-result" style={{
                   backgroundColor: ssUnskilledChange >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
@@ -730,19 +815,25 @@ export default function Module2({ theme, setActiveTab }) {
                   color: ssUnskilledChange >= 0 ? 'var(--accent-success)' : 'var(--accent-error)',
                   fontSize: '1.1rem'
                 }}>
-                  Unskilled wage change (ŵ<sub>U</sub>): <strong>{ssUnskilledChange.toFixed(1)}%</strong>
+                  Unskilled wage change (ŵ<sub>U</sub>): <strong>{ssUnskilledChange >= 0 ? '+' : ''}{ssUnskilledChange.toFixed(1)}%</strong>
                 </div>
               </div>
 
               {/* Ranking */}
-              <div className="calc-result" style={{ marginTop: '8px', textAlign: 'center' }}>
+              <div className="calc-result" style={{ marginTop: '8px', textAlign: 'center', fontSize: '0.9rem' }}>
                 <strong>Ranking:</strong> ŵ<sub>S</sub> ({ssSkilledChange.toFixed(1)}%) {ssSkilledChange >= ssPriceChange1 ? '>' : '<'} p̂₁ ({ssPriceChange1}%) {ssPriceChange1 >= ssPriceChange2 ? '>' : '<'} p̂₂ ({ssPriceChange2}%) {ssPriceChange2 >= ssUnskilledChange ? '>' : '<'} ŵ<sub>U</sub> ({ssUnskilledChange.toFixed(1)}%)
               </div>
+              <div style={{ marginTop: '4px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Wage ordering: <strong>Skilled wage change &gt; Manufacturing price change &gt; Agriculture price change &gt; Unskilled wage change</strong>
+              </div>
 
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '16px', fontStyle: 'italic' }}>
+                <strong>📊 What this graph shows:</strong> Illustrates the magnification effect of the Stolper-Samuelson theorem. The change in factor wages (ŵS and ŵU) is larger in magnitude (magnified) than the changes in the goods prices (p̂₁ and p̂₂).
+              </p>
               {/* Bar Chart */}
               <PlotlyChart
                 data={[{
-                  x: ['Skilled Wage', 'Mfg Price', 'Agri Price', 'Unskilled Wage'],
+                  x: ['Skilled Wage (ŵS)', 'Mfg Price (p̂₁)', 'Agri Price (p̂₂)', 'Unskilled Wage (ŵU)'],
                   y: [ssSkilledChange, ssPriceChange1, ssPriceChange2, ssUnskilledChange],
                   type: 'bar',
                   marker: {
@@ -752,15 +843,33 @@ export default function Module2({ theme, setActiveTab }) {
                       '#f59e0b',
                       ssUnskilledChange >= 0 ? '#10b981' : '#ef4444'
                     ]
-                  }
+                  },
+                  customdata: [
+                    `Skilled Wage changed by ${ssSkilledChange.toFixed(1)}% (Real purchasing power ${ssSkilledChange > Math.max(ssPriceChange1, ssPriceChange2) ? 'Rises' : 'Falls'})`,
+                    `Mfg Price changed by ${ssPriceChange1}%`,
+                    `Agri Price changed by ${ssPriceChange2}%`,
+                    `Unskilled Wage changed by ${ssUnskilledChange.toFixed(1)}% (Real purchasing power ${ssUnskilledChange > Math.max(ssPriceChange1, ssPriceChange2) ? 'Rises' : 'Falls'})`
+                  ],
+                  hovertemplate: '<b>%{x}</b><br>' +
+                                 'Percentage Change: %{y:.2f}%<br>' +
+                                 'Interpretation: %{customdata}<extra></extra>'
                 }]}
-                layout={{ ...baseLayout, title: { text: 'Stolper-Samuelson: Price & Wage Changes (%)', font: { size: 14, ...plotFont } }, yaxis: { ...baseLayout.yaxis, title: '% Change' }, height: 340 }}
+                layout={{ 
+                  ...baseLayout, 
+                  title: { text: '<b>Stolper-Samuelson Effect: Goods Prices and Factor Wages</b>', font: { size: 14, ...plotFont } }, 
+                  xaxis: { ...baseLayout.xaxis, title: 'Price or wage variable' },
+                  yaxis: { ...baseLayout.yaxis, title: 'Percentage change (%)' }, 
+                  height: 340 
+                }}
                 style={{ width: '100%', height: '340px', marginTop: '12px' }}
               />
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> The skilled wage rises more than both goods prices, so skilled workers' real purchasing power rises. The unskilled wage falls while goods prices rise, so unskilled workers' real purchasing power falls.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                The skilled wage rises more than both goods prices, so skilled workers gain in real terms. The unskilled wage falls while goods prices rise, so unskilled workers lose in real terms. This is the magnification effect!
+              </p>
             </div>
             <TutorTip tip="Real income means what your wage can buy, not just the number written on your paycheck." />
           </div>
@@ -782,20 +891,23 @@ export default function Module2({ theme, setActiveTab }) {
 
             <div className="interactive-calc">
               <h4 style={{ fontSize: '1rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>🧭 Mini Calculator: Real Wage</span>
+                <span>🧭 Real Earnings and Purchasing Power</span>
                 <button onClick={resetReal} className="reset-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <RefreshCw size={12} /><span>Reset</span>
                 </button>
               </h4>
               <div className="calc-row">
                 <div className="calc-input-wrapper">
-                  <label>Wage growth (%):</label>
+                  <label>Nominal wage growth (%):</label>
                   <input type="number" className="calc-input" value={realWageGrowth} step="1" onChange={e => setRealWageGrowth(Number(e.target.value))} />
                 </div>
                 <div className="calc-input-wrapper">
-                  <label>Price growth (%):</label>
+                  <label>Average price growth (%):</label>
                   <input type="number" className="calc-input" value={realPriceGrowth} step="1" onChange={e => setRealPriceGrowth(Number(e.target.value))} />
                 </div>
+              </div>
+              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Formula: <strong>Real wage change ≈ wage growth − price growth</strong>
               </div>
               <div className="calc-result" style={{
                 marginTop: '12px', textAlign: 'center', fontSize: '1.1rem',
@@ -803,8 +915,8 @@ export default function Module2({ theme, setActiveTab }) {
                 borderColor: realWageChange >= 0 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
                 color: realWageChange >= 0 ? 'var(--accent-success)' : 'var(--accent-error)'
               }}>
-                Real wage change ≈ {realWageGrowth}% − {realPriceGrowth}% = <strong>{realWageChange}%</strong>
-                {realWageChange >= 0 ? ' → Worker is better off ✅' : ' → Worker is worse off ❌'}
+                Approximate real wage change (%): <strong>{realWageChange >= 0 ? '+' : ''}{realWageChange}%</strong>
+                {realWageChange > 0 ? ' → Purchasing power rises' : realWageChange < 0 ? ' → Purchasing power falls' : ' → Purchasing power is roughly unchanged'}
               </div>
             </div>
 
@@ -878,21 +990,16 @@ export default function Module2({ theme, setActiveTab }) {
                 Cloth output <strong>falls</strong>
               </div>
             </div>
-            <div className="math-formula">Q̂<sub>F</sub> = K̂ + (α<sub>KC</sub> / D) × (K̂ − L̂)</div>
-            <div className="math-formula">Q̂<sub>C</sub> = L̂ − (α<sub>LF</sub> / D) × (K̂ − L̂)</div>
-            <div className="math-formula">where D = α<sub>KF</sub> − α<sub>LF</sub></div>
-            <div className="factor-table-wrapper" style={{ margin: '12px 0' }}>
-              <table className="factor-table">
-                <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
-                <tbody>
-                  <tr><td>Q̂<sub>F</sub></td><td>% change in food output</td></tr>
-                  <tr><td>Q̂<sub>C</sub></td><td>% change in cloth output</td></tr>
-                  <tr><td>K̂</td><td>% change in capital supply</td></tr>
-                  <tr><td>L̂</td><td>% change in labor supply</td></tr>
-                  <tr><td>α<sub>KF</sub></td><td>Share of capital used in food</td></tr>
-                  <tr><td>α<sub>LF</sub></td><td>Share of labor used in food</td></tr>
-                </tbody>
-              </table>
+            
+            <div style={{ padding: '12px', background: 'rgba(var(--bg-color), 0.1)', border: '1px solid var(--card-border)', borderRadius: '6px', margin: '12px 0', fontSize: '0.85rem' }}>
+              <strong>Formula & Symbols:</strong>
+              <div className="math-formula" style={{ margin: '8px 0' }}>Q̂<sub>F</sub> = K̂ + (α<sub>KC</sub> / D) × (K̂ − L̂)</div>
+              <div className="math-formula" style={{ margin: '8px 0' }}>Q̂<sub>C</sub> = L̂ − (α<sub>LF</sub> / D) × (K̂ − L̂)</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                • <strong>K̂</strong> = capital growth (%) | <strong>L̂</strong> = labor growth (%)<br />
+                • <strong>Q̂<sub>F</sub></strong> = food output growth (%) | <strong>Q̂<sub>C</sub></strong> = cloth output growth (%)<br />
+                • <strong>D</strong> = α<sub>KF</sub> − α<sub>LF</sub> (where α<sub>KF</sub> is capital share in Food, α<sub>LF</sub> is labor share in Food)
+              </div>
             </div>
 
             <div className="interactive-calc">
@@ -938,7 +1045,7 @@ export default function Module2({ theme, setActiveTab }) {
                       color: rybQF >= 0 ? 'var(--accent-success)' : 'var(--accent-error)',
                       fontSize: '1.05rem'
                     }}>
-                      Food output change (Q̂<sub>F</sub>): <strong>{rybQF.toFixed(1)}%</strong>
+                      Food output change (Q̂<sub>F</sub>): <strong>{rybQF >= 0 ? '+' : ''}{rybQF.toFixed(1)}%</strong>
                     </div>
                     <div className="calc-result" style={{
                       backgroundColor: rybQC >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
@@ -946,26 +1053,46 @@ export default function Module2({ theme, setActiveTab }) {
                       color: rybQC >= 0 ? 'var(--accent-success)' : 'var(--accent-error)',
                       fontSize: '1.05rem'
                     }}>
-                      Cloth output change (Q̂<sub>C</sub>): <strong>{rybQC.toFixed(1)}%</strong>
+                      Cloth output change (Q̂<sub>C</sub>): <strong>{rybQC >= 0 ? '+' : ''}{rybQC.toFixed(1)}%</strong>
                     </div>
                   </div>
 
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '12px', fontStyle: 'italic' }}>
+                    <strong>📊 What this graph shows:</strong> Compares the percentage change in output for capital-intensive Food vs labor-intensive Cloth when resource endowments grow.
+                  </p>
                   <PlotlyChart
                     data={[{
                       x: ['Food Output (Q̂F)', 'Cloth Output (Q̂C)'],
                       y: [rybQF, rybQC],
                       type: 'bar',
-                      marker: { color: [rybQF >= 0 ? '#10b981' : '#ef4444', rybQC >= 0 ? '#10b981' : '#ef4444'] }
+                      marker: { color: [rybQF >= 0 ? '#10b981' : '#ef4444', rybQC >= 0 ? '#10b981' : '#ef4444'] },
+                      customdata: [
+                        [rybQF >= 0 ? 'Expands' : 'Contracts', 'Capital-intensive (Food)'],
+                        [rybQC >= 0 ? 'Expands' : 'Contracts', 'Labor-intensive (Cloth)']
+                      ],
+                      hovertemplate: '<b>%{x}</b><br>' +
+                                     'Output Change: %{y:.2f}%<br>' +
+                                     'Status: %{customdata[0]}<br>' +
+                                     'Intensity: %{customdata[1]}<extra></extra>'
                     }]}
-                    layout={{ ...baseLayout, title: { text: 'Rybczynski: Output Changes (%)', font: { size: 14, ...plotFont } }, yaxis: { ...baseLayout.yaxis, title: '% Change' }, height: 300 }}
+                    layout={{ 
+                      ...baseLayout, 
+                      title: { text: '<b>Rybczynski Effect: Resource Growth and Sector Output</b>', font: { size: 14, ...plotFont } }, 
+                      xaxis: { ...baseLayout.xaxis, title: 'Sector' },
+                      yaxis: { ...baseLayout.yaxis, title: 'Output change (%)' }, 
+                      height: 300 
+                    }}
                     style={{ width: '100%', height: '300px', marginTop: '12px' }}
                   />
                 </>
               )}
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> When capital grows more than labor, the capital-intensive sector expands more strongly. The labor-intensive sector may shrink.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                When capital grows more than labor, the capital-intensive sector expands more strongly. The labor-intensive sector may shrink.
+              </p>
             </div>
 
             {/* Micro Quiz */}
@@ -1035,42 +1162,59 @@ export default function Module2({ theme, setActiveTab }) {
               Gains from trade means <strong>U<sub>B</sub> &gt; U<sub>A</sub></strong>. The free trade bundle is a better consumption possibility than the autarky bundle.
             </p>
 
-            {/* Simple PPF diagram with A and B */}
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '12px', fontStyle: 'italic' }}>
+              <strong>📊 What this graph shows:</strong> Compares the national consumption possibilities in autarky vs free trade. Free trade shifts consumption from point A to point B on a higher price line, showing that trade expands consumption options beyond the PPF.
+            </p>
+            {/* Simple PPF diagram with A and B (Swapped axes: X = Agri, Y = Mfg) */}
             <PlotlyChart
               data={[
-                { x: [0, 40, 80], y: [100, 60, 0], mode: 'lines', name: 'PPF', line: { color: '#3b82f6', width: 3 } },
-                { x: [30], y: [55], mode: 'markers+text', name: 'A (Autarky)', text: ['A'], textposition: 'top right', marker: { size: 14, color: '#f59e0b', symbol: 'circle' }, textfont: { size: 14, color: '#f59e0b' } },
-                { x: [50], y: [65], mode: 'markers+text', name: 'B (Free Trade)', text: ['B'], textposition: 'top right', marker: { size: 14, color: '#10b981', symbol: 'diamond' }, textfont: { size: 14, color: '#10b981' } },
+                { x: [100, 60, 0], y: [0, 40, 80], mode: 'lines', name: 'PPF', line: { color: '#3b82f6', width: 3 }, hovertemplate: '<b>PPF (Production Frontier)</b><br>Agri: %{x} units<br>Mfg: %{y} units<extra></extra>' },
+                { x: [0, 110], y: [60, 0], mode: 'lines', name: 'Autarky price line', line: { color: '#f59e0b', width: 1.5, dash: 'dash' }, hovertemplate: '<b>Autarky price line</b><extra></extra>' },
+                { x: [0, 130], y: [100, 0], mode: 'lines', name: 'Free trade price line', line: { color: '#10b981', width: 1.5, dash: 'dash' }, hovertemplate: '<b>Free trade price line</b><extra></extra>' },
+                { x: [55], y: [30], mode: 'markers+text', name: 'A: Autarky bundle', text: ['A (Autarky)'], textposition: 'bottom left', marker: { size: 14, color: '#f59e0b', symbol: 'circle' }, textfont: { size: 13, color: '#f59e0b', weight: 'bold' }, hovertemplate: '<b>A: Autarky bundle</b><br>Agri consumption: 55 units<br>Mfg consumption: 30 units<extra></extra>' },
+                { x: [65], y: [50], mode: 'markers+text', name: 'B: Free trade bundle', text: ['B (Free Trade)'], textposition: 'top right', marker: { size: 14, color: '#10b981', symbol: 'diamond' }, textfont: { size: 13, color: '#10b981', weight: 'bold' }, hovertemplate: '<b>B: Free trade bundle</b><br>Agri consumption: 65 units<br>Mfg consumption: 50 units<br>Status: Higher welfare after trade<extra></extra>' },
               ]}
               layout={{
                 ...baseLayout,
-                title: { text: 'Gains from Trade: Autarky (A) vs Free Trade (B)', font: { size: 14, ...plotFont } },
-                xaxis: { ...baseLayout.xaxis, title: 'Manufacturing' },
-                yaxis: { ...baseLayout.yaxis, title: 'Agriculture' },
+                title: { text: '<b>Gains from Trade: Autarky vs Free Trade</b>', font: { size: 14, ...plotFont } },
+                xaxis: { ...baseLayout.xaxis, title: 'Agriculture consumption (units of Agri)' },
+                yaxis: { ...baseLayout.yaxis, title: 'Manufacturing consumption (units of Mfg)' },
                 height: 360,
                 showlegend: true,
-                legend: { font: plotFont, bgcolor: 'transparent' }
+                legend: { font: { size: 9, ...plotFont }, bgcolor: 'transparent', x: 0.5, y: 1.1, orientation: 'h' }
               }}
               style={{ width: '100%', height: '360px' }}
             />
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '4px' }}>
-              Point B lies <strong>outside</strong> the PPF — free trade lets the country consume beyond what it can produce alone.
-            </p>
+            
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                Free trade allows the economy to reach a better consumption bundle (point B) than autarky (point A). Point B lies outside the PPF production frontier, showing that trade expands consumption options beyond domestic production capabilities.
+              </p>
+            </div>
           </div>
 
           {/* ─── Lesson 17: Welfare Change ─── */}
           <div className="lesson-card" id="m2-lesson17">
             <h3>Lesson 17: Measuring Welfare Change with Prices and Consumption</h3>
-            <div className="math-formula">W<sub>A</sub> = P<sub>A1</sub> × C<sub>A1</sub> + P<sub>A2</sub> × C<sub>A2</sub></div>
-            <div className="math-formula">W<sub>B</sub> = P<sub>A1</sub> × C<sub>B1</sub> + P<sub>A2</sub> × C<sub>B2</sub></div>
-            <div className="math-formula">ΔW = W<sub>B</sub> − W<sub>A</sub> = P<sub>A1</sub>(C<sub>B1</sub> − C<sub>A1</sub>) + P<sub>A2</sub>(C<sub>B2</sub> − C<sub>A2</sub>)</div>
+            <div style={{ padding: '12px', background: 'rgba(var(--bg-color), 0.1)', border: '1px solid var(--card-border)', borderRadius: '6px', margin: '12px 0', fontSize: '0.85rem' }}>
+              <strong>Formula & Symbols:</strong>
+              <div className="math-formula" style={{ margin: '6px 0' }}>W<sub>A</sub> = P<sub>A1</sub> × C<sub>A1</sub> + P<sub>A2</sub> × C<sub>A2</sub></div>
+              <div className="math-formula" style={{ margin: '6px 0' }}>W<sub>B</sub> = P<sub>A1</sub> × C<sub>B1</sub> + P<sub>A2</sub> × C<sub>B2</sub></div>
+              <div className="math-formula" style={{ margin: '6px 0' }}>ΔW = W<sub>B</sub> − W<sub>A</sub> = P<sub>A1</sub>(C<sub>B1</sub> − C<sub>A1</sub>) + P<sub>A2</sub>(C<sub>B2</sub> − C<sub>A2</sub>)</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                • <strong>P<sub>A1</sub>, P<sub>A2</sub></strong> = Autarky price of Good 1 and Good 2<br />
+                • <strong>C<sub>A1</sub>, C<sub>A2</sub></strong> = Autarky consumption of Good 1 and Good 2<br />
+                • <strong>C<sub>B1</sub>, C<sub>B2</sub></strong> = Free trade consumption of Good 1 and Good 2
+              </div>
+            </div>
             <p>
               We evaluate <strong>both baskets at autarky prices</strong> to compare them on the same scale. If the free trade consumption basket is worth more than the autarky basket at autarky prices, welfare has increased.
             </p>
 
             <div className="interactive-calc">
               <h4 style={{ fontSize: '1rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>🧭 Interactive Calculator: Welfare Change</span>
+                <span>🧭 Measuring Welfare Change at Autarky Prices</span>
                 <button onClick={resetWelfare} className="reset-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <RefreshCw size={12} /><span>Reset</span>
                 </button>
@@ -1089,22 +1233,25 @@ export default function Module2({ theme, setActiveTab }) {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '16px' }}>
-                <div className="calc-result">W<sub>A</sub>: <strong>{wfWA.toFixed(0)}</strong></div>
-                <div className="calc-result">W<sub>B</sub>: <strong>{wfWB.toFixed(0)}</strong></div>
+                <div className="calc-result">Autarky basket value (W<sub>A</sub>): <strong>{wfWA.toFixed(0)}</strong></div>
+                <div className="calc-result">Free trade basket value (W<sub>B</sub>): <strong>{wfWB.toFixed(0)}</strong></div>
                 <div className="calc-result" style={{
                   backgroundColor: wfDeltaW >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                   borderColor: wfDeltaW >= 0 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
                   color: wfDeltaW >= 0 ? 'var(--accent-success)' : 'var(--accent-error)',
                   fontSize: '1.1rem'
                 }}>
-                  ΔW: <strong>{wfDeltaW >= 0 ? '+' : ''}{wfDeltaW.toFixed(0)}</strong>
-                  {wfDeltaW >= 0 ? ' ✅' : ' ❌'}
+                  Welfare change (ΔW): <strong>{wfDeltaW >= 0 ? '+' : ''}{wfDeltaW.toFixed(0)}</strong>
+                  <br /><span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>({wfDeltaW > 0 ? "Welfare increased" : wfDeltaW < 0 ? "Welfare decreased" : "No measured welfare change"})</span>
                 </div>
               </div>
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> If the free trade consumption basket is worth more than the autarky basket at autarky prices, measured welfare has increased.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                If the free trade consumption basket is worth more than the autarky basket at autarky prices, measured welfare has increased.
+              </p>
             </div>
           </div>
 
@@ -1122,8 +1269,8 @@ export default function Module2({ theme, setActiveTab }) {
             </p>
 
             <div className="interactive-calc">
-              <h4 style={{ fontSize: '1rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>🧭 Interactive Table: Gains from Trade (3 Goods)</span>
+              <h4 style={{ fontSize: '1.05rem', marginBottom: '12px', color: 'var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>🧭 Measuring Gains Using Trade and Production Data</span>
                 <button onClick={resetGFT} className="reset-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <RefreshCw size={12} /><span>Reset</span>
                 </button>
@@ -1134,11 +1281,11 @@ export default function Module2({ theme, setActiveTab }) {
                     <tr>
                       <th>Good</th>
                       <th>Autarky Price (P<sub>A</sub>)</th>
-                      <th>Net Imports</th>
-                      <th>Prod. Change</th>
-                      <th>Trade Contrib.</th>
-                      <th>Prod. Contrib.</th>
-                      <th>Total</th>
+                      <th>Net Imports (C<sub>B</sub> − Q<sub>B</sub>)</th>
+                      <th>Change in Production (Q<sub>B</sub> − Q<sub>A</sub>)</th>
+                      <th>Trade-flow Contribution P<sub>A</sub> × (C<sub>B</sub> − Q<sub>B</sub>)</th>
+                      <th>Production-change Contribution P<sub>A</sub> × (Q<sub>B</sub> − Q<sub>A</sub>)</th>
+                      <th>Total Contribution</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1160,7 +1307,7 @@ export default function Module2({ theme, setActiveTab }) {
                   </tbody>
                   <tfoot>
                     <tr style={{ borderTop: '2px solid var(--accent-primary)' }}>
-                      <td colSpan="6" style={{ fontWeight: 700, textAlign: 'right', paddingRight: '12px' }}>Total ΔW:</td>
+                      <td colSpan="6" style={{ fontWeight: 700, textAlign: 'right', paddingRight: '12px' }}>Total measured gains from trade (Total ΔW):</td>
                       <td style={{
                         fontWeight: 700, fontSize: '1.1rem',
                         color: gftTotal >= 0 ? 'var(--accent-success)' : 'var(--accent-error)'
@@ -1173,8 +1320,11 @@ export default function Module2({ theme, setActiveTab }) {
               </div>
             </div>
 
-            <div className="means-box" style={{ borderColor: 'var(--accent-success)', marginTop: '16px' }}>
-              <strong>What to notice:</strong> This method lets researchers measure gains from trade even when direct consumption data are difficult to collect.
+            <div className="notice-box" style={{ marginTop: '16px' }}>
+              <h5>🔎 What to notice</h5>
+              <p>
+                This method is useful because trade and production data are often easier to observe than direct consumption data. It lets researchers measure gains from trade even when direct utility or consumption details are unavailable.
+              </p>
             </div>
             <TutorTip tip="Positive net imports mean the country is importing that good. Negative means exporting. Both contribute to gains from trade when evaluated at autarky prices." />
           </div>

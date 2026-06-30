@@ -8,6 +8,8 @@ Gravity with AI is a professional, interactive educational website designed for 
 
 - **Beginner-friendly explanations** of trade theory concepts with intuition-first teaching
 - **Interactive economic graphs and calculators** built with Plotly.js — updated live as you change inputs
+- **Descriptive graph titles, labelled axes, and explicit legends** on every chart
+- **Hover tooltips** on every data point showing exact values and economic interpretations
 - **AI Tutor Tips** that simplify difficult concepts with contextual guidance
 - **"What to notice" boxes** that highlight key takeaways after each interactive element
 - **Check-your-understanding quizzes** embedded inside lessons for immediate reinforcement
@@ -17,6 +19,23 @@ Gravity with AI is a professional, interactive educational website designed for 
 - **Hosted on GitHub Pages** as a fully static production site
 
 ---
+
+## Graph & Visual Standards
+
+Every interactive graph in this course follows a consistent visual standard:
+
+| Element | Standard Applied |
+|---|---|
+| **Title** | Descriptive title explaining what the graph shows (e.g. "Comparative Advantage: Home vs Foreign PPF") |
+| **X-axis** | Named with units (e.g. "Cloth output (units)") |
+| **Y-axis** | Named with units (e.g. "Food output (units)") |
+| **Legend** | Explicit legend entries for every line/series |
+| **Hover tooltips** | Show exact values and economic meaning for each data point |
+| **"📊 What this graph shows"** | Contextual description above every Plotly chart |
+| **"🔎 What to notice"** | Takeaway box below every chart summarizing the key insight |
+| **"🧑‍🏫 Tutor Tip"** | AI-style sidebar tip on the most important conceptual point |
+
+
 
 ## Live Website
 

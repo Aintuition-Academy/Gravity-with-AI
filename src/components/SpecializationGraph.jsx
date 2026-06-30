@@ -67,21 +67,26 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
       y: [0],
       type: 'scatter',
       mode: 'markers+text',
-      name: 'Current World Price (P₁/P₂)',
-      text: [`P₁/P₂ = ${worldPrice.toFixed(2)}`],
+      name: 'Current World Relative Price (P₁/P₂)',
+      text: [`Current World Price P₁/P₂ = ${worldPrice.toFixed(2)}`],
       textposition: 'top center',
-      textfont: { color: 'var(--accent-warning)', size: 14, weight: 'bold' },
-      marker: { size: 18, color: '#f59e0b', symbol: 'circle' }
+      textfont: { color: '#f59e0b', size: 12, weight: 'bold' },
+      marker: { size: 18, color: '#f59e0b', symbol: 'circle' },
+      hovertemplate: `<b>Current World Relative Price</b><br>P₁/P₂ = ${worldPrice.toFixed(2)}<extra></extra>`
     };
 
     const layout = {
+      title: {
+        text: '<b>Specialization and Relative Price: Both Countries</b>',
+        font: { color: textColor, family: 'Poppins', size: 14 }
+      },
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'transparent',
-      margin: { l: 20, r: 20, t: 60, b: 20 },
+      margin: { l: 20, r: 20, t: 60, b: 30 },
       showlegend: false,
       xaxis: {
-        title: 'World Relative Price P₁ / P₂',
-        titlefont: { color: textColor, size: 12 },
+        title: 'World Relative Price P₁ / P₂ (Manufacturing relative to Agriculture)',
+        titlefont: { color: textColor, size: 11 },
         tickfont: { color: textColor },
         gridcolor: 'transparent',
         zeroline: false,
@@ -97,7 +102,7 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
         {
           x: oppCostHome,
           y: -0.15,
-          text: `Home cost:<br>a₁/a₂ = ${oppCostHome.toFixed(2)}`,
+          text: `Home threshold:<br>a₁/a₂ = ${oppCostHome.toFixed(2)}`,
           showarrow: true,
           arrowhead: 2,
           arrowcolor: '#3b82f6',
@@ -108,7 +113,7 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
         {
           x: oppCostForeign,
           y: -0.15,
-          text: `Foreign cost:<br>a₁*/a₂* = ${oppCostForeign.toFixed(2)}`,
+          text: `Foreign threshold:<br>a₁*/a₂* = ${oppCostForeign.toFixed(2)}`,
           showarrow: true,
           arrowhead: 2,
           arrowcolor: '#8b5cf6',
@@ -127,7 +132,10 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
   return (
     <div>
       <div className="lab-explanation">
-        <h4 style={{ color: 'var(--accent-primary)' }}>Wage-based Specialization Logic</h4>
+        <h4 style={{ color: 'var(--accent-primary)' }}>Specialization and Relative Price</h4>
+        <p style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          <strong>📊 What this graph shows:</strong> This timeline displays the opportunity cost thresholds for both countries as diamond markers and the current world relative price as a circle. Workers choose the sector that pays a higher wage.
+        </p>
         <p style={{ marginTop: '8px' }}>
           Workers choose to work in the industry that offers the higher wage:
         </p>
@@ -142,22 +150,34 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
         <div style={{ padding: '20px', border: '1px solid var(--card-border)', borderRadius: 'var(--border-radius-md)', background: 'rgba(59, 130, 246, 0.04)' }}>
           <h5 style={{ color: '#3b82f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Home Production</span>
+            <span>Home Specialization Decision</span>
             <span style={{ fontSize: '0.8rem', padding: '4px 8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '20px' }}>{homeProd}</span>
           </h5>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
             {homeExplain}
           </p>
+          <div style={{ marginTop: '8px', fontSize: '0.8rem', padding: '6px', borderLeft: '3px solid #3b82f6', paddingLeft: '10px' }}>
+            <strong>Decision Rules:</strong><br/>
+            • If P₁/P₂ &gt; a₁/a₂ → Home produces Manufacturing<br/>
+            • If P₁/P₂ &lt; a₁/a₂ → Home produces Agriculture<br/>
+            • If P₁/P₂ = a₁/a₂ → Home can produce both
+          </div>
         </div>
 
         <div style={{ padding: '20px', border: '1px solid var(--card-border)', borderRadius: 'var(--border-radius-md)', background: 'rgba(139, 92, 246, 0.04)' }}>
           <h5 style={{ color: '#8b5cf6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Foreign Production</span>
+            <span>Foreign Specialization Decision</span>
             <span style={{ fontSize: '0.8rem', padding: '4px 8px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '20px' }}>{foreignProd}</span>
           </h5>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
             {foreignExplain}
           </p>
+          <div style={{ marginTop: '8px', fontSize: '0.8rem', padding: '6px', borderLeft: '3px solid #8b5cf6', paddingLeft: '10px' }}>
+            <strong>Decision Rules:</strong><br/>
+            • If P₁/P₂ &gt; a₁*/a₂* → Foreign produces Manufacturing<br/>
+            • If P₁/P₂ &lt; a₁*/a₂* → Foreign produces Agriculture<br/>
+            • If P₁/P₂ = a₁*/a₂* → Foreign can produce both
+          </div>
         </div>
       </div>
 
@@ -168,6 +188,10 @@ export default function SpecializationGraph({ worldPrice, homeA1, homeA2, foreig
           (i.e., {Math.min(oppCostHome, oppCostForeign).toFixed(2)} &lt; P₁/P₂ &lt; {Math.max(oppCostHome, oppCostForeign).toFixed(2)}), 
           both countries will specialize completely in their comparative advantage sectors. This leads to the largest possible gains from trade!
         </p>
+      </div>
+
+      <div style={{ marginTop: '10px', padding: '8px', backgroundColor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', borderRadius: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+        <strong>💡 What to notice:</strong> Each country compares the world relative price with its own opportunity cost. The country with the lower opportunity cost of Manufacturing has comparative advantage there and will specialize in Manufacturing when the world price exceeds its threshold.
       </div>
 
       <TutorTip tip="If P₁/P₂ > a₁/a₂, Home specializes in Manufacturing. If P₁/P₂ < a₁/a₂, Home specializes in Agriculture. If they are equal, wages are identical in both sectors and workers can produce both!" />
