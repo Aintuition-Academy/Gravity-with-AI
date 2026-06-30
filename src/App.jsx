@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Roadmap from './components/Roadmap';
 import TutorTip from './components/TutorTip';
 import Quiz from './components/Quiz';
+import Module2 from './components/Module2';
 import PPFGraph from './components/PPFGraph';
 import SpecializationPanel from './components/SpecializationPanel';
 import CPFGraph from './components/CPFGraph';
@@ -13,7 +14,7 @@ import ComparativeStaticsGraph from './components/ComparativeStaticsGraph';
 import { HelpCircle, RefreshCw, Sparkles, BookOpen, Layers, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home'); // 'home' or 'module1'
+  const [activeTab, setActiveTab] = useState('home'); // 'home', 'module1', or 'module2'
   const [theme, setTheme] = useState('dark');
   const [moduleTab, setModuleTab] = useState('theory1'); // 'theory1', 'theory2', 'quiz'
 
@@ -87,9 +88,13 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
 
-  const handleStartModule = () => {
-    setActiveTab('module1');
-    setModuleTab('theory1');
+  const handleStartModule = (moduleId) => {
+    if (moduleId === 2) {
+      setActiveTab('module2');
+    } else {
+      setActiveTab('module1');
+      setModuleTab('theory1');
+    }
   };
 
   // Opportunities and Specialized calculations for quick display panels
@@ -103,7 +108,7 @@ export default function App() {
       {activeTab === 'home' && (
         <>
           <Hero onStartModule={handleStartModule} />
-          <Roadmap activeModule={1} onSelectModule={handleStartModule} />
+          <Roadmap onSelectModule={handleStartModule} />
         </>
       )}
 
@@ -876,6 +881,10 @@ export default function App() {
           )}
 
         </div>
+      )}
+
+      {activeTab === 'module2' && (
+        <Module2 theme={theme} setActiveTab={setActiveTab} />
       )}
 
       <footer>

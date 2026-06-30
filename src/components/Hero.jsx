@@ -36,12 +36,18 @@ export default function Hero({ onStartModule }) {
         
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '650px', margin: '0 auto 24px auto' }}>
-            Our curriculum starts with <strong>Module 1: Ricardian Foundations of Trade</strong>, where you will explore absolute and comparative advantage, gains from trade, and Dornbusch-Fischer-Samuelson (DFS) continuous markets.
+            Our curriculum covers <strong>Module 1: Ricardian Foundations of Trade</strong> and <strong>Module 2: Trade and Resources</strong>, with more modules coming soon.
           </p>
-          <button onClick={onStartModule} className="hero-btn">
-            <span>Start Module 1</span>
-            <ArrowRight size={18} />
-          </button>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={() => onStartModule(1)} className="hero-btn">
+              <span>Start Module 1</span>
+              <ArrowRight size={18} />
+            </button>
+            <button onClick={() => onStartModule(2)} className="hero-btn" style={{ background: 'linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%)' }}>
+              <span>Start Module 2</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
 
         <div className="features-grid">

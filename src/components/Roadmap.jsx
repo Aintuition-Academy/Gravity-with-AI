@@ -1,7 +1,7 @@
 import React from 'react';
-import { Lock, Unlock, Play } from 'lucide-react';
+import { Lock, Play } from 'lucide-react';
 
-export default function Roadmap({ activeModule, onSelectModule }) {
+export default function Roadmap({ onSelectModule }) {
   const modules = [
     {
       id: 1,
@@ -10,9 +10,16 @@ export default function Roadmap({ activeModule, onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 7 }, (_, i) => ({
-      id: i + 2,
-      title: `Module ${i + 2}: Coming Soon`,
+    {
+      id: 2,
+      title: "Module 2: Trade and Resources",
+      description: "Explore how differences in resources drive trade through the Heckscher-Ohlin model, Stolper-Samuelson effects, Rybczynski theorem, and measuring gains from trade.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: i + 3,
+      title: `Module ${i + 3}: Coming Soon`,
       description: "This module will be added later.",
       active: false,
       status: "Future Module"
