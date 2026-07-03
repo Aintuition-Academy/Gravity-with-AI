@@ -429,6 +429,31 @@ export default function Module3({ theme, setActiveTab }) {
     setDampVal(0.4);
   };
 
+  // ── 3.5 Newton's Method State ──────────────────────────────────────────────
+  const [newtonX, setNewtonX] = useState(3.0);
+  const [newtonIter, setNewtonIter] = useState(0);
+
+  const newtonF = (x) => 0.1 * Math.pow(x, 3) - 1.0;
+  const newtonDf = (x) => 0.3 * Math.pow(x, 2);
+
+  const xRange = Array.from({ length: 35 }, (_, idx) => 1.0 + idx * 0.1);
+  const fVals = xRange.map(x => newtonF(x));
+
+  // Compute guesses iteratively
+  let newtonCurrent = newtonX;
+  for (let i = 0; i < newtonIter; i++) {
+    const df = newtonDf(newtonCurrent);
+    if (Math.abs(df) > 1e-9) {
+      newtonCurrent = newtonCurrent - newtonF(newtonCurrent) / df;
+    }
+  }
+  const dfCurrent = newtonDf(newtonCurrent);
+  const newtonNext = Math.abs(dfCurrent) > 1e-9 ? newtonCurrent - newtonF(newtonCurrent) / dfCurrent : newtonCurrent;
+
+  const tangentX = [newtonCurrent, newtonNext];
+  const tangentY = [newtonF(newtonCurrent), 0];
+
+
   // ── 3.6 Exact Hat Algebra State ───────────────────────────────────────────
   // Separate states for the 4 categories
   const [hatWageBase, setHatWageBase] = useState(10.0);
@@ -515,6 +540,10 @@ export default function Module3({ theme, setActiveTab }) {
   };
 
   // ── 3.7 GFT State ─────────────────────────────────────────────────────────
+  const [gftPiNN, setGftPiNN] = useState(0.70);
+  const [gftSigma, setGftSigma] = useState(5);
+  const gftGFT = ((1 - Math.pow(gftPiNN, 1 / (1 - gftSigma))) * 100).toFixed(2);
+
   const resetGFT = () => {
     setGftPiNN(0.70);
     setGftSigma(5);
@@ -1012,6 +1041,7 @@ export default function Module3({ theme, setActiveTab }) {
   const sliderLabelRow = { display: 'flex', justifyContent: 'space-between', fontWeight: 500, color: 'var(--text-primary)' };
   const resultBox = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', marginTop: '12px' };
   const meansBox = { padding: '12px 16px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', fontSize: '0.88rem', lineHeight: 1.8 };
+  const noticeBox = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.2)', fontSize: '0.9rem', marginTop: '14px' };
 
   return (
     <div className="container" style={{ padding: '40px 24px' }}>
