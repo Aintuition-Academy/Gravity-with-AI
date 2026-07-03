@@ -5,7 +5,7 @@ export default function Roadmap({ onSelectModule }) {
   const modules = [
     {
       id: 1,
-      title: "Module 1: Ricardian Foundations of Trade",
+      title: "Module 1: Trade and Technology",
       description: "Learn how technological differences generate comparative advantages, explore trade equilibrium, and study the Dornbusch-Fischer-Samuelson (DFS) continuum of goods model.",
       active: true,
       status: "Active"
@@ -17,9 +17,16 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 6 }, (_, i) => ({
-      id: i + 3,
-      title: `Module ${i + 3}: Coming Soon`,
+    {
+      id: 3,
+      title: "Module 3: GRAVITY with Gravitas",
+      description: "Discover the gravity model of trade — why big economies trade more, why distance reduces trade, and how the Armington model generates structural gravity, multilateral resistance, and welfare gains.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 5 }, (_, i) => ({
+      id: i + 4,
+      title: `Module ${i + 4}: Coming Soon`,
       description: "This module will be added later.",
       active: false,
       status: "Future Module"

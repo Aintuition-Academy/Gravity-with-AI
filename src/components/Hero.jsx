@@ -11,12 +11,12 @@ export default function Hero({ onStartModule }) {
     {
       icon: <BarChart3 size={24} />,
       title: "Dynamic Graphs",
-      description: "Visualize production boundaries, consumption gains, and multi-good trade equilibriums."
+      description: "Visualize production boundaries, consumption gains, gravity patterns, and multi-good trade equilibriums."
     },
     {
       icon: <Sliders size={24} />,
       title: "Interactive Labs",
-      description: "Adjust populations, unit labor requirements, and prices in real-time to watch the curves shift."
+      description: "Adjust populations, unit labor requirements, trade costs, and elasticities in real-time to watch the curves shift."
     },
     {
       icon: <Cpu size={24} />,
@@ -35,16 +35,20 @@ export default function Hero({ onStartModule }) {
         </p>
         
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '650px', margin: '0 auto 24px auto' }}>
-            Our curriculum covers <strong>Module 1: Ricardian Foundations of Trade</strong> and <strong>Module 2: Trade and Resources</strong>, with more modules coming soon.
+          <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto 24px auto' }}>
+            Our curriculum covers <strong>Module 1: Trade and Technology</strong>, <strong>Module 2: Trade and Resources</strong>, and <strong>Module 3: GRAVITY with Gravitas</strong> — with more modules coming soon.
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => onStartModule(1)} className="hero-btn">
-              <span>Start Module 1</span>
+              <span>Module 1</span>
               <ArrowRight size={18} />
             </button>
             <button onClick={() => onStartModule(2)} className="hero-btn" style={{ background: 'linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%)' }}>
-              <span>Start Module 2</span>
+              <span>Module 2</span>
+              <ArrowRight size={18} />
+            </button>
+            <button onClick={() => onStartModule(3)} className="hero-btn" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)' }}>
+              <span>Module 3</span>
               <ArrowRight size={18} />
             </button>
           </div>

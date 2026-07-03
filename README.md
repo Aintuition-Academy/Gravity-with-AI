@@ -86,7 +86,7 @@ This publishes the contents of `dist/` to the GitHub Pages branch.
 
 ## Academic Structure
 
-### Module 1: Ricardian Foundations of Trade
+### Module 1: Trade and Technology
 
 Module 1 introduces the core logic of international trade. It explains why countries trade, how comparative advantage works, and how specialization creates gains from trade.
 
@@ -155,15 +155,52 @@ Module 2 explores how differences in factor endowments drive trade patterns. It 
 
 ---
 
+### Module 3: GRAVITY with Gravitas
+
+Module 3 explores the gravity model of trade. It covers basic gravity relations, structural gravity with multilateral resistances, the Armington microfoundation, general equilibrium wages, and exact hat algebra.
+
+#### Submodule 3.1: The Basic Gravity Equation (Lessons 1–4)
+- Naive gravity and the role of size and distance
+- Log-linear gravity regressions
+
+#### Submodule 3.2: Structural Gravity (Lessons 5–7)
+- Outward and Inward Multilateral Resistance
+- Direct bilateral links vs. multilateral alternatives
+
+#### Submodule 3.3: Armington Model Foundation (Lessons 8–13)
+- Differentiation of goods by origin
+- Iceberg trade costs
+- CES demand structure and spending shares
+- CES Price Index and Trade Share determinants
+
+#### Submodule 3.4: General Equilibrium in the Armington Model (Lessons 14–15)
+- Labor market clearing
+- Endogenous wage determination
+
+#### Submodule 3.5: Numerical Simulation (Lessons 16–20)
+- Wage iteration algorithm
+- Dampening parameters for updates
+- Newton's method (scalar and multivariate)
+
+#### Submodule 3.6: Exact Hat Algebra (Lessons 21–25)
+- Proportional changes (hat algebra)
+- Policy shock simulation (tariffs / trade agreements)
+
+#### Submodule 3.7: Gains from Trade in Gravity (Lessons 26–28)
+- Real welfare change measures
+- Domestic expenditure share sufficient statistic (GFT = 1 - π_nn^(1/(1-σ)))
+
+---
+
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1 and 2 are currently active:
+The full course contains **8 modules**. Modules 1, 2, and 3 are currently active:
 
 | Module | Status |
 |---|---|
-| Module 1: Ricardian Foundations of Trade | ✅ Active |
+| Module 1: Trade and Technology | ✅ Active |
 | Module 2: Trade and Resources | ✅ Active |
-| Module 3 | 🔒 Coming Soon |
+| Module 3: GRAVITY with Gravitas | ✅ Active |
 | Module 4 | 🔒 Coming Soon |
 | Module 5 | 🔒 Coming Soon |
 | Module 6 | 🔒 Coming Soon |

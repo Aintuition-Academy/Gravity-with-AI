@@ -5,6 +5,7 @@ import Roadmap from './components/Roadmap';
 import TutorTip from './components/TutorTip';
 import Quiz from './components/Quiz';
 import Module2 from './components/Module2';
+import Module3 from './components/Module3';
 import PPFGraph from './components/PPFGraph';
 import SpecializationPanel from './components/SpecializationPanel';
 import CPFGraph from './components/CPFGraph';
@@ -92,6 +93,8 @@ export default function App() {
   const handleStartModule = (moduleId) => {
     if (moduleId === 2) {
       setActiveTab('module2');
+    } else if (moduleId === 3) {
+      setActiveTab('module3');
     } else {
       setActiveTab('module1');
       setModuleTab('theory1');
@@ -126,7 +129,7 @@ export default function App() {
                 <span style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Module 1
                 </span>
-                <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>Ricardian Foundations of Trade</h2>
+                <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>Trade and Technology</h2>
               </div>
             </div>
           </div>
@@ -900,6 +903,10 @@ export default function App() {
 
       {activeTab === 'module2' && (
         <Module2 theme={theme} setActiveTab={setActiveTab} />
+      )}
+
+      {activeTab === 'module3' && (
+        <Module3 theme={theme} setActiveTab={setActiveTab} />
       )}
 
       <footer>
