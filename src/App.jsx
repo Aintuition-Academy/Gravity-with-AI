@@ -1,4 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    console.error('ErrorBoundary caught:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', color: '#f87171', background: '#1e1e2e', minHeight: '60vh', borderRadius: '12px', margin: '40px' }}>
+          <h2>⚠️ Module 3 Crashed</h2>
+          <p><strong>Error:</strong> {this.state.error?.message}</p>
+          <pre style={{ fontSize: '0.8rem', whiteSpace: 'pre-wrap', marginTop: '16px', color: '#94a3b8' }}>
+            {this.state.error?.stack}
+          </pre>
+          <button onClick={() => this.setState({ hasError: false, error: null })} style={{ marginTop: '16px', padding: '8px 16px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            Try Again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Roadmap from './components/Roadmap';
@@ -906,7 +936,9 @@ export default function App() {
       )}
 
       {activeTab === 'module3' && (
-        <Module3 theme={theme} setActiveTab={setActiveTab} />
+        <ErrorBoundary>
+          <Module3 theme={theme} setActiveTab={setActiveTab} />
+        </ErrorBoundary>
       )}
 
       <footer>
