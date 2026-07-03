@@ -217,6 +217,7 @@ export default function Module3({ theme, setActiveTab }) {
 
   const [wIterHistory, setWIterHistory] = useState([]);
   const [wIterDone, setWIterDone] = useState(false);
+  const [wStepHistory, setWStepHistory] = useState([]);
   const [wStepW, setWStepW] = useState([1.0, 0.8]);
   const [wStepDone, setWStepDone] = useState(false);
 
@@ -279,12 +280,63 @@ export default function Module3({ theme, setActiveTab }) {
   }, [wIterSigma, wIterL1, wIterL2, wIterA1, wIterA2, wIterD12, wIterD21, wIterW1Init, wIterW2Init, wIterMu, wIterTol, wIterMaxIt]);
 
   const startWStep = () => {
-    setWStepHistory([]);
-    setWStepW([wIterW1Init, wIterW2Init]);
+    const sigma = wIterSigma;
+    const L = [wIterL1, wIterL2];
+    const a = [wIterA1, wIterA2];
+    const dMat = [[1, wIterD12], [wIterD21, 1]];
+    
+    let w = [wIterW1Init, wIterW2Init];
+    const norm = w[0];
+    w = w.map(wi => wi / norm);
+
+    const pi = Array.from({ length: 2 }, (_, i) =>
+      Array.from({ length: 2 }, (_, j) => {
+        const numer = (dMat[i][j] ** (1 - sigma)) * ((w[i] / a[i]) ** (1 - sigma));
+        let denom = 0;
+        for (let l = 0; l < 2; l++) denom += (dMat[l][j] ** (1 - sigma)) * ((w[l] / a[l]) ** (1 - sigma));
+        return denom > 0 ? numer / denom : 0;
+      })
+    );
+
+    const S = w.map((wi, i) => wi * L[i]);
+    const D = w.map((_, i) => {
+      let d_ = 0;
+      for (let j = 0; j < 2; j++) d_ += pi[i][j] * w[j] * L[j];
+      return d_;
+    });
+    
+    const err = Math.max(...D.map((di, i) => Math.abs(di / S[i] - 1)));
+    const firstEntry = {
+      t: 0,
+      w1: w[0].toFixed(4), 
+      w2: w[1].toFixed(4),
+      S1: S[0].toFixed(2), 
+      D1: D[0].toFixed(2), 
+      ratio1: S[0] > 0 ? (D[0] / S[0]).toFixed(4) : '0',
+      S2: S[1].toFixed(2), 
+      D2: D[1].toFixed(2), 
+      ratio2: S[1] > 0 ? (D[1] / S[1]).toFixed(4) : '0',
+      err: err.toFixed(6)
+    };
+
+    setWStepHistory([firstEntry]);
+    setWIterHistory([firstEntry]);
     setWStepDone(false);
+
+    const mu = wIterMu;
+    const wNew = w.map((wi, i) => {
+      const proposed = S[i] > 0 ? (D[i] / S[i]) * wi : wi;
+      return (1 - mu) * wi + mu * proposed;
+    });
+    setWStepW(wNew);
   };
 
   const nextWStep = () => {
+    if (wStepHistory.length === 0) {
+      startWStep();
+      return;
+    }
+
     const sigma = wIterSigma;
     const L = [wIterL1, wIterL2];
     const a = [wIterA1, wIterA2];
@@ -329,7 +381,7 @@ export default function Module3({ theme, setActiveTab }) {
     setWStepHistory(newHist);
     setWIterHistory(newHist);
 
-    if (err < tol || wStepHistory.length >= wIterMaxIt) { 
+    if (err < tol || newHist.length > wIterMaxIt) { 
       setWStepDone(true); 
       setWIterDone(true);
       return; 
