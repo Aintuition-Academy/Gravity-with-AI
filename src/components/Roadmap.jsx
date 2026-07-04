@@ -24,12 +24,19 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 5 }, (_, i) => ({
-      id: i + 4,
-      title: `Module ${i + 4}: Coming Soon`,
-      description: "This module will be added later.",
+    {
+      id: 4,
+      title: "Module 4: Monopolistic Competition & Heterogeneous Firms",
+      description: "Explore New Trade Theory: Krugman's love-of-variety gains, Dixit-Stiglitz monopolistic competition, Melitz's firm heterogeneity and selection, and the Melitz-Pareto gravity connection.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 4 }, (_, i) => ({
+      id: i + 5,
+      title: `Module ${i + 5}: Coming Soon`,
+      description: "This module is under development and will be added later.",
       active: false,
-      status: "Future Module"
+      status: "Coming Soon"
     }))
   ];
 

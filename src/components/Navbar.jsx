@@ -34,6 +34,12 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme }) 
           >
             Module 3
           </button>
+          <button 
+            onClick={() => setActiveTab('module4')} 
+            className={`nav-link-btn ${activeTab === 'module4' ? 'active' : ''}`}
+          >
+            Module 4
+          </button>
           <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme">
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
