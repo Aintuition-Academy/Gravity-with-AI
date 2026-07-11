@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Ricardian Foundations of Trade** and **Module 2: Trade and Resources**, with more modules coming soon.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, and **Module 4: Monopolistic Competition and Heterogeneous Firms**.
 
 ---
 
@@ -192,16 +192,50 @@ Module 3 explores the gravity model of trade. It covers basic gravity relations,
 
 ---
 
+### Module 4: Monopolistic Competition and Heterogeneous Firms
+
+Module 4 introduces firm heterogeneity and monopolistic competition. It covers Krugman's increasing returns framework and the Melitz sorting model of trade.
+
+#### Submodule 4.1: Krugman 1979: Variable Markups & Closed Economy
+- Preferences over a continuum of varieties and variable markups
+- The pricing curve (PP) and free entry curve (ZZ)
+- Sunk entry costs and zero profits
+- Costless trade opening ($L \to 2L$ variety gains proof)
+
+#### Submodule 4.2: Krugman 1980: CES & Gravity
+- Dixit-Stiglitz constant elasticity preferences
+- Pricing and firm size invariance
+- Gravity trade flows and shifters
+- The Home-Market Effect
+
+#### Submodule 4.3: Melitz Model: Closed Economy
+- Productivity draws and entry lottery
+- Zero-cutoff profit (ZCP) and free entry (FE) conditions
+- Endogenous cutoff productivity threshold
+
+#### Submodule 4.4: Melitz Model: Open Economy
+- Fixed export costs and self-selection of firms
+- Three performance zones: Exit, Domestic Only, and Exporting Elite
+- Shift in ZCP and welfare gains via intra-industry labor reallocation
+
+#### Submodule 4.5: Melitz-Pareto: Distorted Gravity
+- Upper-tier and lower-tier nested CES demand
+- Pareto productivity distribution and superstar convergence bound
+- Bilateral access fees and entry masses
+- Chaney's margin decomposition (Intensive vs. Extensive margins)
+
+---
+
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1, 2, and 3 are currently active:
+The full course contains **8 modules**. Modules 1, 2, 3, and 4 are currently active:
 
 | Module | Status |
 |---|---|
 | Module 1: Trade and Technology | ✅ Active |
 | Module 2: Trade and Resources | ✅ Active |
 | Module 3: GRAVITY with Gravitas | ✅ Active |
-| Module 4 | 🔒 Coming Soon |
+| Module 4: Monopolistic Competition and Heterogeneous Firms | ✅ Active |
 | Module 5 | 🔒 Coming Soon |
 | Module 6 | 🔒 Coming Soon |
 | Module 7 | 🔒 Coming Soon |

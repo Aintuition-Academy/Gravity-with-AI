@@ -15,7 +15,7 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '40px', color: '#f87171', background: '#1e1e2e', minHeight: '60vh', borderRadius: '12px', margin: '40px' }}>
-          <h2>⚠️ Module 3 Crashed</h2>
+          <h2>⚠️ {this.props.moduleName || 'Module'} Crashed</h2>
           <p><strong>Error:</strong> {this.state.error?.message}</p>
           <pre style={{ fontSize: '0.8rem', whiteSpace: 'pre-wrap', marginTop: '16px', color: '#94a3b8' }}>
             {this.state.error?.stack}
@@ -969,13 +969,13 @@ export default function App() {
       )}
 
       {activeTab === 'module3' && (
-        <ErrorBoundary>
+        <ErrorBoundary moduleName="Module 3">
           <Module3 theme={theme} setActiveTab={setActiveTab} />
         </ErrorBoundary>
       )}
 
       {activeTab === 'module4' && (
-        <ErrorBoundary>
+        <ErrorBoundary moduleName="Module 4">
           <Module4 theme={theme} setActiveTab={setActiveTab} />
         </ErrorBoundary>
       )}

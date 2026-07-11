@@ -1,633 +1,1408 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Plotly from 'plotly.js-dist-min';
+import React, { useState, useEffect } from 'react';
+import './Module4.css';
 import TutorTip from './TutorTip';
 import Module4Quiz from './Module4Quiz';
+import { BookOpen, Lightbulb } from 'lucide-react';
 
-export default function Module4({ theme, setActiveTab }) {
-  const [moduleTab, setModuleTab] = useState('sub1');
-
-  // ── Theme helpers ──
-  const isDark = theme === 'dark';
-  const textColor = isDark ? '#f8fafc' : '#0f172a';
-  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-
-  // ── Graph refs ──
-  const krugWelfareRef = useRef(null);
-  const krugHomeMarketRef = useRef(null);
-  const dsMarkupRef = useRef(null);
-  const dsFirmCountRef = useRef(null);
-  const melitzThreshRef = useRef(null);
-  const melitzDistRef = useRef(null);
-  const paretoRef = useRef(null);
-
-  // ══════════════════════════════════════════════════════════════
-  // 4.1  KRUGMAN STATE
-  // ══════════════════════════════════════════════════════════════
-  const [krugL, setKrugL] = useState(100);
-  const [krugLStar, setKrugLStar] = useState(100);
-  const [krugSigma, setKrugSigma] = useState(4);
-  const [krugF, setKrugF] = useState(5);
-
-  const krugNH = krugL / (krugSigma * krugF);
-  const krugNF = krugLStar / (krugSigma * krugF);
-  const krugNWorld = krugNH + krugNF;
-
-  const krugUH_auto  = Math.pow(krugNH, 1 / (krugSigma - 1));
-  const krugUH_trade = Math.pow(krugNWorld, 1 / (krugSigma - 1));
-  const krugGainPct  = ((krugUH_trade / krugUH_auto - 1) * 100).toFixed(1);
-
-  const resetKrug = () => { setKrugL(100); setKrugLStar(100); setKrugSigma(4); setKrugF(5); };
-
-  // Home market effect
-  const [hmeSH, setHmeSH] = useState(0.6);
-  const [hmeSigmaHME, setHmeSigmaHME] = useState(4);
-  const hmeScaleFactor = (hmeSH - 0.5) * (hmeSigmaHME / (hmeSigmaHME - 1));
-  const hmeShareH = Math.min(1, Math.max(0, 0.5 + hmeScaleFactor)).toFixed(3);
-
-  // ══════════════════════════════════════════════════════════════
-  // 4.2  DIXIT-STIGLITZ STATE
-  // ══════════════════════════════════════════════════════════════
-  const [dsSigma, setDsSigma] = useState(4);
-  const [dsW, setDsW] = useState(10);
-  const [dsA, setDsA] = useState(2);
-  const [dsF, setDsF] = useState(5);
-  const [dsL, setDsL] = useState(100);
-
-  const dsMC     = dsW / dsA;
-  const dsP      = (dsSigma / (dsSigma - 1)) * dsMC;
-  const dsMarkup = (dsP - dsMC).toFixed(2);
-  const dsN      = (dsL / (dsSigma * dsF)).toFixed(2);
-
-  const resetDS = () => { setDsSigma(4); setDsW(10); setDsA(2); setDsF(5); setDsL(100); };
-
-  // ══════════════════════════════════════════════════════════════
-  // 4.3  MELITZ STATE
-  // ══════════════════════════════════════════════════════════════
-  const [melSigma, setMelSigma] = useState(4);
-  const [melFd, setMelFd]   = useState(5);
-  const [melFx, setMelFx]   = useState(20);
-  const [melTau, setMelTau] = useState(1.4);
-
-  const melPhiD = 1.0;
-  const melPhiX = melTau * Math.pow(melFx / melFd, 1 / (melSigma - 1));
-
-  const resetMelitz = () => { setMelSigma(4); setMelFd(5); setMelFx(20); setMelTau(1.4); };
-
-  // ══════════════════════════════════════════════════════════════
-  // 4.4  MELITZ-PARETO STATE
-  // ══════════════════════════════════════════════════════════════
-  const [parK, setParK]         = useState(3.5);
-  const [parSigma, setParSigma] = useState(4);
-  const [parFd, setParFd]       = useState(5);
-  const [parFx, setParFx]       = useState(20);
-  const [parTau, setParTau]     = useState(1.4);
-
-  const parCondition  = parK > parSigma - 1;
-  const parRaw        = parCondition ? Math.pow(parTau, -parK) * Math.pow(parFx / parFd, 1 - parK / (parSigma - 1)) : 0;
-  const parExportFrac = parCondition ? Math.min(1, Math.max(0, parRaw)).toFixed(4) : 'N/A (k <= sigma-1)';
-  const parGFT        = parCondition ? ((Math.pow(parTau, -(parK - (parSigma - 1))) - 1) * 100).toFixed(2) : 'N/A';
-
-  const resetPareto = () => { setParK(3.5); setParSigma(4); setParFd(5); setParFx(20); setParTau(1.4); };
-
-  // ══════════════════════════════════════════════════════════════
-  // PLOTLY EFFECTS
-  // ══════════════════════════════════════════════════════════════
-
-  // 4.1 Krugman welfare
-  useEffect(() => {
-    if (moduleTab === 'sub1' && krugWelfareRef.current) {
-      try {
-        const sigmaRange = Array.from({ length: 30 }, (_, i) => 2.1 + i * 0.3);
-        const gains = sigmaRange.map(sig =>
-          ((Math.pow((krugNH + krugNF) / krugNH, 1 / (sig - 1)) - 1) * 100)
-        );
-        Plotly.newPlot(krugWelfareRef.current, [{
-          x: sigmaRange, y: gains, mode: 'lines',
-          line: { color: '#6366f1', width: 3 }, fill: 'tozeroy', fillcolor: 'rgba(99,102,241,0.08)',
-          hovertemplate: 'sigma=%{x:.1f}<br>Gain=%{y:.1f}%<extra></extra>'
-        }], {
-          title: { text: '<b>Welfare Gain from Trade (Love of Variety)</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Elasticity sigma', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Welfare gain (%)', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor }
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, krugNH, krugNF, textColor, gridColor]);
-
-  // 4.1 Home market effect
-  useEffect(() => {
-    if (moduleTab === 'sub1' && krugHomeMarketRef.current) {
-      try {
-        const sRange = Array.from({ length: 50 }, (_, i) => 0.01 + i * 0.02);
-        const shareH = sRange.map(s => {
-          const sf = (s - 0.5) * (hmeSigmaHME / (hmeSigmaHME - 1));
-          return Math.min(1, Math.max(0, 0.5 + sf));
-        });
-        Plotly.newPlot(krugHomeMarketRef.current, [
-          { x: [0, 1], y: [0, 1], mode: 'lines', line: { color: '#64748b', dash: 'dash', width: 1.5 }, name: '45 deg' },
-          { x: sRange, y: shareH, mode: 'lines', line: { color: '#f59e0b', width: 3 }, name: 'Home prod. share', hovertemplate: 'Spending=%{x:.2f}<br>Production=%{y:.2f}<extra></extra>' }
-        ], {
-          title: { text: '<b>Home Market Effect</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Home spending share', range: [0, 1], titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Home production share', range: [0, 1], titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          legend: { font: { color: textColor, size: 10 }, bgcolor: 'transparent' }
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, hmeSigmaHME, textColor, gridColor]);
-
-  // 4.2 DS markup
-  useEffect(() => {
-    if (moduleTab === 'sub2' && dsMarkupRef.current) {
-      try {
-        const sigmaVals = Array.from({ length: 30 }, (_, i) => 1.5 + i * 0.5);
-        const markups = sigmaVals.map(sig => {
-          const mc = dsW / dsA;
-          const p  = (sig / (sig - 1)) * mc;
-          return (p - mc) / mc * 100;
-        });
-        Plotly.newPlot(dsMarkupRef.current, [
-          { x: sigmaVals, y: markups, mode: 'lines', line: { color: '#10b981', width: 3 }, hovertemplate: 'sigma=%{x:.1f}<br>Markup=%{y:.1f}%<extra></extra>' },
-          { x: [dsSigma], y: [((dsSigma / (dsSigma - 1)) * dsMC - dsMC) / dsMC * 100], mode: 'markers', marker: { size: 12, color: '#f59e0b', symbol: 'star' }, name: 'Current sigma' }
-        ], {
-          title: { text: '<b>Monopolistic Markup vs. Substitutability</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Elasticity sigma', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Markup over MC (%)', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          showlegend: false
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, dsSigma, dsW, dsA, dsMC, textColor, gridColor]);
-
-  // 4.2 Firm count
-  useEffect(() => {
-    if (moduleTab === 'sub2' && dsFirmCountRef.current) {
-      try {
-        const labVals = Array.from({ length: 30 }, (_, i) => 50 + i * 10);
-        const nVals = labVals.map(l => l / (dsSigma * dsF));
-        Plotly.newPlot(dsFirmCountRef.current, [
-          { x: labVals, y: nVals, mode: 'lines', line: { color: '#6366f1', width: 3 }, hovertemplate: 'L=%{x}<br>n=%{y:.2f} firms<extra></extra>' },
-          { x: [dsL], y: [dsL / (dsSigma * dsF)], mode: 'markers', marker: { size: 12, color: '#f59e0b', symbol: 'star' }, name: 'Current' }
-        ], {
-          title: { text: '<b>Number of Firms vs. Market Size</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Labour supply L', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Number of firms n', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          showlegend: false
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, dsSigma, dsF, dsL, textColor, gridColor]);
-
-  // 4.3 Melitz threshold
-  useEffect(() => {
-    if (moduleTab === 'sub3' && melitzThreshRef.current) {
-      try {
-        const phiRange = Array.from({ length: 60 }, (_, i) => 0.2 + i * 0.07);
-        const piD = phiRange.map(phi => Math.pow(phi, melSigma - 1) - melFd / 10);
-        const piX = phiRange.map(phi => Math.pow(melTau, 1 - melSigma) * Math.pow(phi, melSigma - 1) - melFx / 10);
-        const capPhi = Math.min(melPhiX, 4.2);
-        Plotly.newPlot(melitzThreshRef.current, [
-          { x: [0.2, 4.2], y: [0, 0], mode: 'lines', line: { color: '#64748b', dash: 'dash', width: 1 }, showlegend: false },
-          { x: phiRange, y: piD, mode: 'lines', line: { color: '#3b82f6', width: 2.5 }, name: 'Domestic profit', hovertemplate: 'phi=%{x:.2f}<br>pi_d=%{y:.2f}<extra></extra>' },
-          { x: phiRange, y: piX, mode: 'lines', line: { color: '#7c3aed', width: 2.5 }, name: 'Export profit', hovertemplate: 'phi=%{x:.2f}<br>pi_x=%{y:.2f}<extra></extra>' }
-        ], {
-          title: { text: '<b>Firm Profit by Productivity (Melitz Cutoffs)</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Firm productivity phi', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Profit', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor, zeroline: true, zerolinecolor: gridColor },
-          legend: { font: { color: textColor, size: 10 }, bgcolor: 'transparent' },
-          annotations: [
-            { x: melPhiD, y: 0, text: 'phi*_d', showarrow: true, arrowcolor: '#3b82f6', font: { color: '#3b82f6', size: 12 }, ay: -30 },
-            { x: capPhi, y: 0, text: 'phi*_x', showarrow: true, arrowcolor: '#7c3aed', font: { color: '#7c3aed', size: 12 }, ay: -50 }
-          ]
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, melSigma, melTau, melFd, melFx, melPhiD, melPhiX, textColor, gridColor]);
-
-  // 4.3 Melitz distribution
-  useEffect(() => {
-    if (moduleTab === 'sub3' && melitzDistRef.current) {
-      try {
-        const phiRange = Array.from({ length: 50 }, (_, i) => 0.5 + i * 0.06);
-        const density = phiRange.map(phi => 2 * Math.exp(-2 * (phi - 0.5)));
-        const phiSurv = phiRange.filter(phi => phi >= melPhiD);
-        const phiExp  = phiRange.filter(phi => phi >= Math.min(melPhiX, 3.4));
-        Plotly.newPlot(melitzDistRef.current, [
-          { x: phiRange, y: density, mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(148,163,184,0.12)', line: { color: '#94a3b8', width: 2 }, name: 'All entrants' },
-          { x: phiSurv,  y: phiSurv.map(phi => 2 * Math.exp(-2 * (phi - 0.5))),  mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.2)',   line: { color: '#3b82f6', width: 2 }, name: 'Domestic producers' },
-          { x: phiExp,   y: phiExp.map(phi => 2 * Math.exp(-2 * (phi - 0.5))),   mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(124,58,237,0.25)',  line: { color: '#7c3aed', width: 2 }, name: 'Exporters' }
-        ], {
-          title: { text: '<b>Firm Selection: Who Produces and Who Exports</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Productivity phi', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Density of firms', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          legend: { font: { color: textColor, size: 10 }, bgcolor: 'transparent', x: 0.6, y: 0.95 }
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, melPhiD, melPhiX, textColor, gridColor]);
-
-  // 4.4 Pareto
-  useEffect(() => {
-    if (moduleTab === 'sub4' && paretoRef.current) {
-      try {
-        const tauRange = Array.from({ length: 30 }, (_, i) => 1.01 + i * 0.1);
-        const fracVals = tauRange.map(tau => {
-          if (!parCondition) return 0;
-          return Math.min(1, Math.max(0, Math.pow(tau, -parK) * Math.pow(parFx / parFd, 1 - parK / (parSigma - 1)))) * 100;
-        });
-        const currentFrac = parCondition ? Math.min(1, Math.max(0, Math.pow(parTau, -parK) * Math.pow(parFx / parFd, 1 - parK / (parSigma - 1)))) * 100 : 0;
-        Plotly.newPlot(paretoRef.current, [
-          { x: tauRange, y: fracVals, mode: 'lines', line: { color: '#6366f1', width: 3 }, fill: 'tozeroy', fillcolor: 'rgba(99,102,241,0.08)', hovertemplate: 'tau=%{x:.2f}<br>Export frac=%{y:.2f}%<extra></extra>' },
-          { x: [parTau], y: [currentFrac], mode: 'markers', marker: { size: 12, color: '#f59e0b', symbol: 'star' }, showlegend: false }
-        ], {
-          title: { text: '<b>Melitz-Pareto: Export Fraction vs. Trade Cost</b>', font: { color: textColor, size: 13 } },
-          paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-          margin: { l: 70, r: 30, t: 50, b: 60 },
-          xaxis: { title: 'Iceberg trade cost tau', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          yaxis: { title: 'Firms exporting (%)', titlefont: { color: textColor, size: 11 }, tickfont: { color: textColor, size: 10 }, gridcolor: gridColor },
-          showlegend: false
-        }, { displayModeBar: false, responsive: true });
-      } catch (e) { console.warn('Plotly:', e); }
-    }
-  }, [moduleTab, parK, parSigma, parFd, parFx, parTau, parCondition, textColor, gridColor]);
-
-  // ══════════════════════════════════════════════════════════════
-  // CSS STYLE HELPERS
-  // ══════════════════════════════════════════════════════════════
-  const card           = { marginBottom: '32px', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px' };
-  const controlCard    = { padding: '16px', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' };
-  const formulaBox     = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.2)', fontFamily: 'monospace', fontSize: '0.97rem', margin: '12px 0', lineHeight: 1.7 };
-  const beforeTouchBox = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)', fontSize: '0.9rem', color: 'var(--text-secondary)' };
-  const tryThisBox     = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', marginTop: '14px', fontSize: '0.9rem' };
-  const resultBox      = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', marginTop: '12px' };
-  const meansBox       = { padding: '12px 16px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', fontSize: '0.88rem', lineHeight: 1.8 };
-  const noticeBox      = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.2)', fontSize: '0.9rem', marginTop: '14px' };
-  const sliderRow      = { display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem' };
-  const sliderLabelRow = { display: 'flex', justifyContent: 'space-between', fontWeight: 500, color: 'var(--text-primary)' };
-  const accent         = '#6366f1';
-
-  // Slider helper
-  const Slider = ({ label, value, setter, min, max, step }) => (
-    <div style={controlCard}>
-      <div style={sliderRow}>
-        <div style={sliderLabelRow}>
-          <span>{label}</span>
-          <span>{step < 1 ? value.toFixed(2) : value}</span>
+function DefinitionBox({ title, children }) {
+  return (
+    <div className="tutor-tip-box" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+      <div className="tutor-icon" style={{ color: 'var(--accent-primary)' }}>
+        <BookOpen size={20} />
+      </div>
+      <div className="tutor-content">
+        <h4 style={{ color: 'var(--accent-primary)', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em', margin: 0 }}>
+          Definition: {title}
+        </h4>
+        <div style={{ margin: '6px 0 0 0', fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+          {children}
         </div>
-        <input type="range" min={min} max={max} step={step} value={value} onChange={e => setter(Number(e.target.value))} />
       </div>
     </div>
   );
+}
+
+function IntuitionBox({ title, children }) {
+  return (
+    <div className="tutor-tip-box" style={{ borderLeft: '4px solid #eab308' }}>
+      <div className="tutor-icon" style={{ color: '#eab308' }}>
+        <Lightbulb size={20} />
+      </div>
+      <div className="tutor-content">
+        <h4 style={{ color: '#eab308', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em', margin: 0 }}>
+          Intuition: {title}
+        </h4>
+        <div style={{ margin: '6px 0 0 0', fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Module4({ theme, setActiveTab }) {
+  const [moduleTab, setModuleTab] = useState("4.1 Krugman 1979: Variable Markups");
+  const [activeMathStep, setActiveMathStep] = useState(1);
+
+  // Trigger MathJax typesetting when stepper tabs or steps change
+  useEffect(() => {
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+      window.MathJax.typesetPromise();
+    }
+  }, [moduleTab, activeMathStep]);
+
+  // Whenever we switch tabs, reset step to 1
+  const handleTabChange = (newTab) => {
+    setModuleTab(newTab);
+    setActiveMathStep(1);
+  };
+
+  // ==========================================
+  // TAB 1: KRUGMAN 1979 - STATE & SOLVER
+  // ==========================================
+  const [krugL, setKrugL] = useState(100); // population L
+  const [krugF, setKrugF] = useState(4.0);   // fixed cost f
+  const [isScaling, setIsScaling] = useState(false);
+
+  // Krugman 1979 G.E. Solver
+  // Assume: phi = 1.0
+  // Demand elasticity function: epsilon(c) = 2.0 + 0.5 / c
+  // Closed-form solution to: c^2 - k*c - 0.5*k = 0 where k = f / L (since phi = 1)
+  const solveKrugman79 = (L, f) => {
+    const k = f / L;
+    const c = (k + Math.sqrt(k * k + 2 * k)) / 2;
+    const q = L * c;
+    const epsilon = 2.0 + 0.5 / c;
+    const pw = epsilon / (epsilon - 1); // p/w ratio
+    const M = L / (epsilon * f); // variety mass
+    return { c, q, pw, M };
+  };
+
+  const krug79Data = solveKrugman79(krugL, krugF);
+
+  // Animation trigger for population scaling L -> 2L
+  const handleScalePopulation = () => {
+    if (isScaling) return;
+    setIsScaling(true);
+    let startL = krugL;
+    const targetL = krugL * 2;
+    const duration = 800; // ms
+    const startTime = performance.now();
+
+    const animate = (time) => {
+      const elapsed = time - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out quadratic
+      const currentL = startL + (targetL - startL) * progress;
+      setKrugL(currentL);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setIsScaling(false);
+      }
+    };
+    requestAnimationFrame(animate);
+  };
+
+  // ==========================================
+  // TAB 2: KRUGMAN 1980 - STATE & SOLVER
+  // ==========================================
+  const [krug80LH, setKrug80LH] = useState(120); // population L_H
+  const [krug80LF, setKrug80LF] = useState(80);  // population L_F
+  const [krug80D, setKrug80D] = useState(1.3);   // iceberg trade cost d
+  const [krug80Sigma, setKrug80Sigma] = useState(3.0); // sigma
+
+  // Krugman 1980 Bilateral gravity wage solver
+  const solveKrugman80 = (LH, LF, d, sigma) => {
+    let wH = 1.0; // Home wage relative to w_F = 1.0
+    const wF = 1.0;
+    const maxIters = 40;
+    const tol = 1e-6;
+
+    for (let i = 0; i < maxIters; i++) {
+      const piHH = LH * Math.pow(wH, 1 - sigma) / (LH * Math.pow(wH, 1 - sigma) + LF * Math.pow(d * wF, 1 - sigma));
+      const piHF = LH * Math.pow(d * wH, 1 - sigma) / (LH * Math.pow(d * wH, 1 - sigma) + LF * Math.pow(wF, 1 - sigma));
+      
+      const newWH = (piHH * wH * LH + piHF * wF * LF) / LH;
+      if (Math.abs(newWH - wH) < tol) {
+        wH = newWH;
+        break;
+      }
+      wH = 0.8 * wH + 0.2 * newWH; // Dampening
+    }
+
+    const piHH = LH * Math.pow(wH, 1 - sigma) / (LH * Math.pow(wH, 1 - sigma) + LF * Math.pow(d * wF, 1 - sigma));
+    const piFH = LF * Math.pow(d * wF, 1 - sigma) / (LH * Math.pow(wH, 1 - sigma) + LF * Math.pow(d * wF, 1 - sigma));
+    const piHF = LH * Math.pow(d * wH, 1 - sigma) / (LH * Math.pow(d * wH, 1 - sigma) + LF * Math.pow(wF, 1 - sigma));
+    const piFF = LF * Math.pow(wF, 1 - sigma) / (LH * Math.pow(d * wH, 1 - sigma) + LF * Math.pow(wF, 1 - sigma));
+
+    const MH = LH / (sigma * 1.0); // variety count (f = 1.0)
+    const MF = LF / (sigma * 1.0);
+
+    const pH = (sigma / (sigma - 1)) * wH;
+    const pF = (sigma / (sigma - 1)) * wF;
+
+    const PH = Math.pow(MH * Math.pow(pH, 1 - sigma) + MF * Math.pow(d * pF, 1 - sigma), 1 / (1 - sigma));
+    const PF = Math.pow(MH * Math.pow(d * pH, 1 - sigma) + MF * Math.pow(pF, 1 - sigma), 1 / (1 - sigma));
+
+    const welfareH = wH / PH;
+    const welfareF = wF / PF;
+
+    return { wH, wF, piHH, piFH, piHF, piFF, welfareH, welfareF };
+  };
+
+  const krug80Data = solveKrugman80(krug80LH, krug80LF, krug80D, krug80Sigma);
+
+  // ==========================================
+  // TAB 3: MELITZ 2003 CLOSED ECONOMY - STATE & SOLVER
+  // ==========================================
+  const [melFe, setMelFe] = useState(2.0); // entry cost f_e
+  const [melF, setMelF] = useState(1.5);   // fixed cost f
+  const [melDelta, setMelDelta] = useState(0.1); // death rate delta
+  const [melSigma, setMelSigma] = useState(3.0); // sigma
+
+  // Assume Pareto productivity distribution G(phi) = 1 - phi^(-theta) for phi >= 1.0
+  const theta = 4.0;
+  const a = 1.0;
+
+  // Closed form solver for Melitz Autarky
+  // phi* = [ (f / (delta * fe)) * (sigma - 1) / (theta - sigma + 1) ]^(1/theta)
+  const solveMelitzAutarky = (fe, f, delta, sigma) => {
+    const k = (sigma - 1) / (theta - sigma + 1);
+    const phiVal = Math.pow((f / (delta * fe)) * k, 1 / theta);
+    const phiStar = Math.max(a, phiVal);
+    const avgProfit = f * k;
+    return { phiStar, avgProfit };
+  };
+
+  const melAutData = solveMelitzAutarky(melFe, melF, melDelta, melSigma);
+
+  // ==========================================
+  // TAB 4: MELITZ 2003 OPEN ECONOMY - STATE & SOLVER
+  // ==========================================
+  const [melTau, setMelTau] = useState(1.3); // iceberg cost tau
+  const [melFx, setMelFx] = useState(1.2);   // export fixed fee f_x
+  const melN = 1; // 1 symmetric foreign partner
+
+  // Closed form solver for open economy
+  const solveMelitzOpen = (fe, f, delta, sigma, tau, fx) => {
+    const k = (sigma - 1) / (theta - sigma + 1);
+    const tradeComp = melN * fx * Math.pow(tau, -theta) * Math.pow(fx / f, -theta / (sigma - 1));
+    const phiVal = Math.pow((k / (delta * fe)) * (f + tradeComp), 1 / theta);
+    const phiStar = Math.max(a, phiVal);
+    const phiX = phiStar * tau * Math.pow(fx / f, 1 / (sigma - 1));
+    const avgProfit = f * k + tradeComp * k;
+    const welfare = ((sigma - 1) / sigma) * Math.pow(100 / (sigma * f), 1 / (sigma - 1)) * phiStar; // L = 100
+    return { phiStar, phiX, avgProfit, welfare };
+  };
+
+  const melOpenData = solveMelitzOpen(melFe, melF, melDelta, melSigma, melTau, melFx);
+
+  // ==========================================
+  // TAB 5: CHANEY & DISTORTED GRAVITY - STATE
+  // ==========================================
+  const [chaneySigma, setChaneySigma] = useState(3.0);
+  const [chaneyTheta, setChaneyTheta] = useState(4.0);
+
+  // Constrain theta > sigma - 1
+  useEffect(() => {
+    if (chaneyTheta <= chaneySigma - 1) {
+      setChaneyTheta(chaneySigma - 1 + 0.1);
+    }
+  }, [chaneySigma]);
+
+  const handleThetaChange = (val) => {
+    const minTheta = chaneySigma - 1;
+    if (val > minTheta) {
+      setChaneyTheta(val);
+    }
+  };
+
+  // Stacked chart margin sizes
+  const intensiveMargin = chaneySigma - 1;
+  const extensiveMargin = chaneyTheta - (chaneySigma - 1);
+  const totalElasticity = chaneyTheta;
+  const intensivePct = (intensiveMargin / totalElasticity) * 100;
+  const extensivePct = (extensiveMargin / totalElasticity) * 100;
 
   return (
-    <div className="container" style={{ padding: '40px 24px' }}>
-
-      {/* ── Header ── */}
-      <div className="module-header">
-        <button onClick={() => setActiveTab('home')} className="back-btn">
-          <span>← Back to Course Path</span>
+    <div className="module4-container">
+      {/* Horizontal tab-based stepper header */}
+      <div className="tabs-header">
+        <button 
+          className={`tab-btn ${moduleTab === "4.1 Krugman 1979: Variable Markups" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.1 Krugman 1979: Variable Markups")}
+        >
+          4.1 Variable Markups
         </button>
-        <div className="module-title-row">
-          <div>
-            <span style={{ color: accent, fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Module 4</span>
-            <h2 style={{ fontSize: '2.1rem', marginTop: '4px' }}>Monopolistic Competition &amp; Heterogeneous Firms</h2>
-          </div>
-        </div>
+        <button 
+          className={`tab-btn ${moduleTab === "4.2 Krugman 1980: CES & Gravity" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.2 Krugman 1980: CES & Gravity")}
+        >
+          4.2 CES &amp; Gravity
+        </button>
+        <button 
+          className={`tab-btn ${moduleTab === "4.3 Melitz Model: Closed Economy" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.3 Melitz Model: Closed Economy")}
+        >
+          4.3 Melitz Closed
+        </button>
+        <button 
+          className={`tab-btn ${moduleTab === "4.4 Melitz Model: Open Economy" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.4 Melitz Model: Open Economy")}
+        >
+          4.4 Melitz Open
+        </button>
+        <button 
+          className={`tab-btn sub-tab-purple ${moduleTab === "4.5 Melitz-Pareto: Distorted Gravity" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.5 Melitz-Pareto: Distorted Gravity")}
+        >
+          4.5 Pareto &amp; Distorted Gravity
+        </button>
+        <button 
+          className={`tab-btn ${moduleTab === "4.6 Module 4 Final Exam" ? 'active' : ''}`}
+          onClick={() => handleTabChange("4.6 Module 4 Final Exam")}
+        >
+          ✏️ 4.6 Final Exam
+        </button>
       </div>
 
-      {/* ── Submodule tabs ── */}
-      <div className="module-sections-nav" style={{ overflowX: 'auto' }}>
-        {[
-          ['sub1', '4.1 Krugman (1980)'],
-          ['sub2', '4.2 Dixit-Stiglitz'],
-          ['sub3', '4.3 Melitz (2003)'],
-          ['sub4', '4.4 Melitz-Pareto'],
-          ['quiz',  'Final Quiz'],
-        ].map(([key, label]) => (
-          <button key={key} onClick={() => setModuleTab(key)}
-            className={`tab-btn ${moduleTab === key ? 'active' : ''}`}>{label}</button>
-        ))}
-      </div>
-
-      {/* ════════════════════ SUB 4.1: KRUGMAN ════════════════════ */}
-      {moduleTab === 'sub1' && (
-        <div>
-          <div className="lesson-card" style={{ borderLeft: `4px solid ${accent}` }}>
-            <h3 style={{ color: accent }}>Why a New Theory of Trade?</h3>
-            <p>Classical models (Modules 1–2) explain trade through <strong>differences</strong> in technology or resources. But most trade occurs between <em>similar</em> rich countries and is <strong>intra-industry</strong>. Krugman (1980) solved this with increasing returns, monopolistic competition, and a <strong>love of variety</strong>.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', margin: '16px 0' }}>
-              <div style={meansBox}><strong>📈 Increasing Returns:</strong><br />Production costs fall as output rises — specialization is efficient even without differences.</div>
-              <div style={meansBox}><strong>❤️ Love of Variety:</strong><br />Consumers value diversity; access to foreign varieties raises welfare directly.</div>
-              <div style={meansBox}><strong>🔄 Intra-Industry Trade:</strong><br />Germany exports BMWs to Japan while Japan exports Toyotas to Germany.</div>
-            </div>
-            <TutorTip tip="Krugman's insight: trade doesn't need comparative advantage. Two identical countries still gain from trade by specializing in different varieties and accessing each other's products." />
+      {/* ======================================================== */}
+      {/* TAB 4.1: KRUGMAN 1979 - VARIABLE MARKUPS */}
+      {/* ======================================================== */}
+      {moduleTab === "4.1 Krugman 1979: Variable Markups" && (
+        <div className="lesson-step-content">
+          <div className="stepper-section-title">
+            4.1 Krugman 1979: Variable Markups &amp; Closed Economy
           </div>
 
-          <div className="lesson-card" id="m4-lesson1">
-            <h3>Lesson 1: The Krugman Setup</h3>
-            <p>One sector with differentiated goods. Each firm produces a unique variety under economies of scale. Technology: <strong>labour = F + c·q</strong> (fixed cost + variable cost). Free entry drives profit to zero.</p>
-            <div style={formulaBox}>
-              <strong>U = [Sum_i  q_i^((sigma-1)/sigma)]^(sigma/(sigma-1))</strong><br />
-              sigma &gt; 1: elasticity of substitution between varieties.
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(185px, 1fr))', gap: '10px', margin: '12px 0' }}>
-              {[['sigma', 'Substitutability between varieties'], ['F', 'Fixed overhead — generates increasing returns'], ['c', 'Marginal cost per unit'], ['n', 'Number of varieties = number of firms'], ['L', 'Labour supply (economy size)']].map(([s, d]) => (
-                <div key={s} style={meansBox}><strong>{s}</strong><br /><span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{d}</span></div>
-              ))}
-            </div>
+          {/* Stepper Wizard Indicator */}
+          <div className="stepper-header">
+            <button className={`step-indicator-btn ${activeMathStep === 1 ? 'active' : ''}`} onClick={() => setActiveMathStep(1)}>
+              <span className="step-num-badge">1</span> Step 1: Pricing Curve (PP)
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 2 ? 'active' : ''}`} onClick={() => setActiveMathStep(2)}>
+              <span className="step-num-badge">2</span> Step 2: Free Entry Curve (ZZ)
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 3 ? 'active' : ''}`} onClick={() => setActiveMathStep(3)}>
+              <span className="step-num-badge">3</span> Step 3: Solving the Closed Economy
+            </button>
           </div>
 
-          <div className="lesson-card" id="m4-lesson2">
-            <h3>Lesson 2: Equilibrium — Markup Pricing and Free Entry</h3>
-            <div style={formulaBox}>
-              <strong>p* = (sigma / (sigma-1)) x w·c</strong> (markup pricing)<br />
-              <strong>n  = L / (sigma x F)</strong> (free entry: zero profit)<br />
-              <strong>q  = (sigma-1) x F / c</strong> (per-firm output)
-            </div>
-            <p>Larger economies have <strong>more firms</strong> — not bigger firms. Trade is like expanding the market — consumers access more varieties.</p>
-            <TutorTip tip="In Krugman's world, trade is like making the market bigger. If Home and Foreign each have n firms, trade gives consumers access to 2n varieties — a welfare gain even without any price changes." />
-          </div>
-
-          <div className="lesson-card" id="m4-lesson3">
-            <h3>Lesson 3: Gains from Trade — Love of Variety</h3>
-            <div style={formulaBox}>
-              <strong>Welfare Gain = (n_World / n_H)^(1/(sigma-1)) - 1</strong>
-            </div>
-            <p>Larger when sigma is small (varieties are poor substitutes — each variety is uniquely valued) and when the foreign market is large.</p>
-
-            <div style={card}>
-              <h4>Interactive Lab: Welfare Gain from Variety</h4>
-              <div style={beforeTouchBox}><strong>Before moving sliders:</strong> See how the gain depends on market sizes and sigma. Try making one country much larger.</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '20px', marginTop: '12px' }}>
-                <div>
-                  <Slider label="Home Labour (L)" value={krugL} setter={setKrugL} min={50} max={500} step={10} />
-                  <Slider label="Foreign Labour (L*)" value={krugLStar} setter={setKrugLStar} min={50} max={500} step={10} />
-                  <Slider label="Elasticity sigma" value={krugSigma} setter={setKrugSigma} min={1.5} max={10} step={0.5} />
-                  <Slider label="Fixed Cost F" value={krugF} setter={setKrugF} min={1} max={20} step={1} />
-                  <button onClick={resetKrug} className="tab-btn" style={{ marginTop: '4px' }}>Reset</button>
-                </div>
-                <div>
-                  <div style={resultBox}>
-                    <p>Autarky varieties (n_H): <strong>{krugNH.toFixed(2)}</strong></p>
-                    <p>Trade varieties (n_World): <strong>{krugNWorld.toFixed(2)}</strong></p>
-                    <p>Welfare gain from trade: <span style={{ fontSize: '1.4rem', color: '#10b981', fontWeight: 700 }}>{krugGainPct}%</span></p>
-                  </div>
-                  <div ref={krugWelfareRef} style={{ height: '280px', width: '100%', marginTop: '16px' }} />
+          <div className="stepper-card-body">
+            {activeMathStep === 1 && (
+              <div>
+                <h4>Setup, Assumptions, &amp; The Pricing Curve (PP)</h4>
+                <DefinitionBox title="Monopolistic competition">
+                  {`A market structure with two halves: monopolistic — each firm is the sole producer of its own differentiated variety, so it faces a downward-sloping demand curve and charges a markup over marginal cost; competitive — entry is free, so profits are driven to zero in equilibrium. The number (mass) of varieties is endogenous: determined by how many firms the market can sustain at zero profit.`}
+                </DefinitionBox>
+                <p>
+                  {`Krugman (1979) models trade driven by internal economies of scale. Households consume a continuum of varieties $\\omega \\in \\Omega$, with additively separable preferences:`}
+                </p>
+                {`$$U = \\int_{\\omega\\in\\Omega} v(c(\\omega))d\\omega, \\quad v' > 0, \\quad v'' < 0$$`}
+                <p>
+                  {`Define the price elasticity of demand for variety $\\omega$ as:`}
+                </p>
+                {`$$\\epsilon(\\omega) = -\\frac{\\partial \\ln c(\\omega)}{\\partial \\ln p(\\omega)} > 0$$`}
+                <p>
+                  {`Under the variable markup condition, elasticity of demand falls as variety consumption increases:`}
+                  {`$$\\frac{\\partial \\epsilon(\\omega)}{\\partial c(\\omega)} < 0$$`}
+                </p>
+                <IntuitionBox title="Why assume ε falls with c?">
+                  {`Think of the first unit of a new good versus the tenth: when you consume little of something, small price changes easily push you toward substitutes (high elasticity); when it is a staple, you are less price-sensitive. This single assumption is what makes markups respond to market size in Krugman-1979 — and it is exactly what CES preferences will shut down in Krugman-1980, where $\\epsilon$ is constant by construction.`}
+                </IntuitionBox>
+                <p>
+                  {`Firms require labor $l(\\omega) = f + \\frac{1}{\\varphi}q(\\omega)$, where $f$ is the fixed cost and $\\varphi$ is productivity. Internal economies of scale are verified via average cost:`}
+                  {`$$AC = w\\left(\\frac{f}{q} + \\frac{1}{\\varphi}\\right)$$`}
+                </p>
+                <IntuitionBox title="Where are the increasing returns?">
+                  {`Average cost is $w(f/q + 1/\\varphi)$, which falls with output: the fixed cost is spread over more units — that is internal economies of scale, the engine of the whole model. It also explains why each variety is made by exactly one firm: two firms splitting a variety would duplicate the fixed cost pointlessly.`}
+                </IntuitionBox>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">📈 Step 1 Derivation: The Pricing Curve (PP)</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Maximize firm profit $\\max p(q)q - w(f + q/\\varphi)$. Writing output as $q = Lc$ and differentiating with respect to price yields the first-order condition:`}
+                    {`$$c + p\\frac{\\partial c}{\\partial p} - \\frac{w}{\\varphi}\\frac{\\partial c}{\\partial p} = 0$$`}
+                    {`Dividing by $c$ yields the upward-sloping PP curve in $(c, p/w)$ space:`}
+                    {`$$\\frac{p}{w} = \\frac{1}{\\varphi} \\frac{\\epsilon(c)}{\\epsilon(c)-1}$$`}
+                    {`Because higher consumption compresses demand elasticity, the markup $\\mu(c) = \\frac{\\epsilon(c)}{\\epsilon(c)-1}$ inflates as $c$ rises.`}
+                  </p>
                 </div>
               </div>
-              <div style={tryThisBox}><strong>Try this:</strong> Raise sigma to 8. The welfare gain falls sharply — when varieties are nearly perfect substitutes, extra variety doesn't matter much. Lower sigma (say 2) makes each variety precious.</div>
+            )}
+
+            {activeMathStep === 2 && (
+              <div>
+                <h4>Step 2: The Free-Entry Curve (ZZ)</h4>
+                <p>
+                  {`Firms enter the industry until profits are completely squeezed to zero. Differentiating from the zero-profit condition yields:`}
+                </p>
+                {`$$\\pi = pq - w\\left(f + \\frac{q}{\\varphi}\\right) = 0$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title">📉 Step 2 Derivation: ZZ Curve</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Substitute $q = Lc$ into the zero-profit condition and divide by $wLc$:`}
+                    {`$$\\frac{p}{w}c - \\frac{f}{L} - \\frac{c}{\\varphi} = 0$$`}
+                    {`Isolating the pricing ratio $p/w$ yields the downward-sloping Free-Entry Curve (ZZ):`}
+                    {`$$\\frac{p}{w} = \\frac{1}{\\varphi} + \\frac{f}{Lc}$$`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeMathStep === 3 && (
+              <div>
+                <h4>Step 3: Solving the Closed Economy &amp; Variety Gains</h4>
+                <p>
+                  {`The intersection of the PP and ZZ curves ($PP = ZZ$) pins down the equilibrium consumption scale $c_0$ and price-to-wage ratio $(p/w)_0$.`}
+                </p>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">🏆 Step 3 Derivation: Closed Economy Equilibrium</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Equating the PP markup pricing to the ZZ average cost line solves for individual variety consumption $c$. Firm scale resolves to:`}
+                    {`$$q = (\\epsilon - 1)\\varphi f$$`}
+                    {`By labor market clearing, the variety mass $M$ matches:`}
+                    {`$$M = \\frac{L}{\\epsilon f}$$`}
+                  </p>
+                </div>
+                <IntuitionBox title="Reading the solution">
+                  {`Firm size $q = (\\epsilon - 1)\\varphi f$ is pinned down by the tension between scale economies ($f$ pushes firms to be big) and market power (elasticity close to 1 lets firms survive while small). The variety count $M = L/(\\epsilon f)$ says a bigger economy supports more firms, not bigger ones in this closed equilibrium; cheaper entry (lower $f$) and less elastic demand also raise variety.`}
+                </IntuitionBox>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">🏆 Variety Gain Expansion Proof</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`When population scales from $L \\to 2L$, the total variety mass in trade ($2M_1$) strictly exceeds autarky ($M_0$):`}
+                    {`$$2M_1 > M_0 \\iff f + \\frac{2L}{\\varphi}(c_0 - c_1) > 0$$`}
+                    {`Because ZZ shifts downward, variety consumption shrinks ($c_1 < c_0$), freeing up labor to sustain more varieties.`}
+                  </p>
+                </div>
+                <IntuitionBox title="Two brand-new sources of gains from trade">
+                  {`Neither channel exists in neoclassical models: 
+                  (a) The pro-competitive effect: with a bigger market, each consumer buys less of each variety, demand becomes more elastic, and markups get squeezed, so the real wage rises — trade disciplines market power. 
+                  (b) The variety effect: consumers value variety, so even though each country's own menu shrinks, the combined accessible menu more than doubles. 
+                  Note the reallocation flavor already present here: fewer, bigger firms — trade rationalizes the industry, and Melitz will make this rationalization selective once firms differ.`}
+                </IntuitionBox>
+              </div>
+            )}
+          </div>
+
+          {/* Tab 1 Interactive Sandbox */}
+          <div className="sliders-grid">
+            <div className="slider-card">
+              <label>
+                <span>Population Scale ($L$):</span>
+                <span className="val-highlight">{krugL.toFixed(0)}</span>
+              </label>
+              <input 
+                type="range" min="50" max="250" step="5"
+                value={krugL} onChange={(e) => setKrugL(Number(e.target.value))} 
+                className="range-slider"
+                disabled={isScaling}
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>Fixed Operating Cost ($f$):</span>
+                <span className="val-highlight">{krugF.toFixed(1)}</span>
+              </label>
+              <input 
+                type="range" min="2.0" max="10.0" step="0.2"
+                value={krugF} onChange={(e) => setKrugF(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <button 
+                className="quiz-btn quiz-btn-primary" 
+                onClick={handleScalePopulation}
+                disabled={isScaling}
+                style={{ width: '100%', height: '40px' }}
+              >
+                Animate Population Scaling (L → 2L)
+              </button>
             </div>
           </div>
 
-          <div className="lesson-card" id="m4-lesson4">
-            <h3>Lesson 4: The Home Market Effect</h3>
-            <p>One of Krugman's most famous predictions: <strong>large countries produce more than proportionally</strong> in scale-intensive sectors.</p>
-            <div style={formulaBox}>
-              <strong>Production share_H = s_H + (s_H - 0.5) x sigma/(sigma-1)</strong><br />
-              s_H = Home share of world spending.
-            </div>
-            <div style={card}>
-              <h4>Interactive Lab: Home Market Effect</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '20px' }}>
-                <div>
-                  <Slider label="Home spending share (s_H)" value={hmeSH} setter={setHmeSH} min={0.1} max={0.9} step={0.01} />
-                  <Slider label="Elasticity sigma" value={hmeSigmaHME} setter={setHmeSigmaHME} min={1.5} max={10} step={0.5} />
-                  <div style={resultBox}>
-                    <p>Home spending share: <strong>{(hmeSH * 100).toFixed(1)}%</strong></p>
-                    <p>Home production share: <strong>{(Number(hmeShareH) * 100).toFixed(1)}%</strong></p>
-                    <p>Amplification: <strong>{hmeSH > 0 ? (Number(hmeShareH) / hmeSH).toFixed(2) : 'N/A'}x</strong></p>
-                  </div>
-                </div>
-                <div>
-                  <div ref={krugHomeMarketRef} style={{ height: '320px', width: '100%' }} />
-                  <div style={noticeBox}><strong>Notice:</strong> The HME curve lies above the 45-degree line — production share exceeds spending share whenever s_H &gt; 0.5.</div>
-                </div>
+          <div className="svg-canvas-row">
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-primary)' }}>
+                📈 Krugman 1979 G.E. Intersection
+              </div>
+              <div className="svg-wrapper">
+                <svg viewBox="0 0 360 200" width="100%" height="100%">
+                  {/* Axes */}
+                  <line x1="40" y1="170" x2="340" y2="170" className="svg-axis" />
+                  <line x1="40" y1="20" x2="40" y2="170" className="svg-axis" />
+                  <text x="190" y="195" className="svg-text" textAnchor="middle" style={{ fontWeight: 600 }}>Consumption c</text>
+                  <text x="15" y="95" className="svg-text" textAnchor="middle" transform="rotate(-90 15 95)" style={{ fontWeight: 600 }}>Price Index p/w</text>
+
+                  {/* PP Curve: upward sloping. p/w = 1.0 * (2c + 0.5) / (c + 0.5) */}
+                  <path 
+                    d={Array.from({ length: 30 }, (_, idx) => {
+                      const cVal = 0.05 + idx * 0.15;
+                      const pwVal = (2 * cVal + 0.5) / (cVal + 0.5);
+                      const x = 40 + (cVal / 5) * 300;
+                      const y = 170 - (pwVal / 3) * 140;
+                      return `${idx === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ')} 
+                    className="svg-curve" 
+                    stroke="var(--accent-primary)" 
+                  />
+
+                  {/* ZZ Curve: downward sloping. p/w = 1.0 + f / (L * c) */}
+                  <path 
+                    d={Array.from({ length: 30 }, (_, idx) => {
+                      const cVal = 0.05 + idx * 0.15;
+                      const pwVal = 1.0 + krugF / (krugL * cVal);
+                      const x = 40 + (cVal / 5) * 300;
+                      const y = 170 - (Math.min(3.5, pwVal) / 3) * 140;
+                      return `${idx === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ')} 
+                    className={`svg-curve ${isScaling ? 'curve-shifting' : ''}`}
+                    stroke="var(--accent-secondary)" 
+                  />
+
+                  {/* Intersection Point */}
+                  {(() => {
+                    const xPt = 40 + (krug79Data.c / 5) * 300;
+                    const yPt = 170 - (krug79Data.pw / 3) * 140;
+                    return (
+                      <>
+                        <line x1={xPt} y1="170" x2={xPt} y2={yPt} className="svg-guide-line" stroke="var(--text-muted)" />
+                        <line x1="40" y1={yPt} x2={xPt} y2={yPt} className="svg-guide-line" stroke="var(--text-muted)" />
+                        <circle cx={xPt} cy={yPt} r="6" fill="var(--accent-warning)" className="svg-marker" />
+                        <text x={xPt + 10} y={yPt - 10} className="svg-text-bold svg-text">E₀</text>
+                      </>
+                    );
+                  })()}
+                </svg>
+              </div>
+              <div className="svg-legend">
+                <span><span style={{ color: 'var(--accent-primary)' }}>■</span> Pricing Curve (PP)</span>
+                <span><span style={{ color: 'var(--accent-secondary)' }}>■</span> Free Entry Curve (ZZ)</span>
               </div>
             </div>
+
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-secondary)' }}>
+                📊 Closed Economy Outcomes
+              </div>
+              <div className="implications-panel" style={{ margin: 0, height: '100%', justifyContent: 'space-around' }}>
+                <div className="implications-grid">
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug79Data.pw).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">Real Cost Index (p/w)</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug79Data.c).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">Variety Consumption (c)</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug79Data.q).toFixed(2)}</div>
+                    <div className="implication-stat-lbl">Firm Output Scale (q)</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug79Data.M).toFixed(1)}</div>
+                    <div className="implication-stat-lbl">Variety Count (M)</div>
+                  </div>
+                </div>
+                <p style={{ margin: '12px 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                  {`Pro-competitive Effect: scaling population L downward shifts the ZZ curve. It drives down variety consumption (c₁ < c₀), pushing up elasticity and compressing the pricing markup (p/w)₁ < (p/w)₀.`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Stepper Controls */}
+          <div className="stepper-nav-footer">
+            <button className="quiz-btn quiz-btn-secondary" onClick={() => setActiveMathStep((prev) => Math.max(1, prev - 1))} disabled={activeMathStep === 1}>
+              ← Back
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Step {activeMathStep} of 3</span>
+            <button className="quiz-btn quiz-btn-primary" onClick={() => setActiveMathStep((prev) => Math.min(3, prev + 1))} disabled={activeMathStep === 3}>
+              Next Step →
+            </button>
           </div>
         </div>
       )}
 
-      {/* ════════════════════ SUB 4.2: DIXIT-STIGLITZ ════════════════════ */}
-      {moduleTab === 'sub2' && (
-        <div>
-          <div className="lesson-card" style={{ borderLeft: `4px solid ${accent}` }}>
-            <h3 style={{ color: accent }}>The Formal Engine: Dixit-Stiglitz (1977)</h3>
-            <p>Krugman's model is built on the <strong>Dixit-Stiglitz (DS) framework</strong> — a tractable model of monopolistic competition that generates clean closed-form solutions. It is the workhorse of New Trade Theory and New Economic Geography.</p>
-            <TutorTip tip="Dixit-Stiglitz (1977) was written as a microeconomics paper. Krugman (1980) realized it was the perfect engine for a new trade theory, giving monopolistic competition with love-of-variety utility and constant elasticity of demand." />
+      {/* ======================================================== */}
+      {/* TAB 4.2: KRUGMAN 1980 - CES & GRAVITY */}
+      {/* ======================================================== */}
+      {moduleTab === "4.2 Krugman 1980: CES & Gravity" && (
+        <div className="lesson-step-content">
+          <div className="stepper-section-title">
+            4.2 Krugman 1980: CES &amp; Gravity
           </div>
 
-          <div className="lesson-card" id="m4-ds1">
-            <h3>Lesson 1: CES Utility and Optimal Demand</h3>
-            <div style={formulaBox}>
-              <strong>U = [integral q(omega)^((sigma-1)/sigma) d_omega]^(sigma/(sigma-1))</strong><br />
-              sigma &gt; 1: elasticity of substitution
-            </div>
-            <p>Maximising subject to budget gives <strong>constant-elasticity demand</strong>:</p>
-            <div style={formulaBox}>
-              <strong>q(omega) = p(omega)^(-sigma) x (E / P^(1-sigma))</strong>
-            </div>
-            <p>Each firm faces a constant price elasticity of demand equal to sigma.</p>
+          <div className="stepper-header">
+            <button className={`step-indicator-btn ${activeMathStep === 1 ? 'active' : ''}`} onClick={() => setActiveMathStep(1)}>
+              <span className="step-num-badge">1</span> Step 1: CES Preferences
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 2 ? 'active' : ''}`} onClick={() => setActiveMathStep(2)}>
+              <span className="step-num-badge">2</span> Step 2: Derivations
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 3 ? 'active' : ''}`} onClick={() => setActiveMathStep(3)}>
+              <span className="step-num-badge">3</span> Step 3: Gravity &amp; Welfare
+            </button>
           </div>
 
-          <div className="lesson-card" id="m4-ds2">
-            <h3>Lesson 2: Markup Pricing</h3>
-            <div style={formulaBox}>
-              <strong>p* = (sigma / (sigma-1)) x w/a</strong><br />
-              Markup = p* - MC = MC / (sigma - 1)
-            </div>
-            <ul style={{ lineHeight: 2, paddingLeft: '20px' }}>
-              <li>Markup is <strong>constant</strong>, depends only on sigma</li>
-              <li><strong>Higher sigma</strong> (more substitutable) → lower markup</li>
-              <li><strong>Lower sigma</strong> (unique varieties) → higher markup</li>
-            </ul>
+          <div className="stepper-card-body">
+            {activeMathStep === 1 && (
+              <div>
+                <h4>Dixit-Stiglitz CES Preference Structure</h4>
+                <p>
+                  {`Krugman (1980) shifts preferences to standard CES with a constant elasticity parameter $\\sigma > 1$:`}
+                </p>
+                {`$$U_j = \\left[ \\sum_{i=1}^N \\int_{\\omega\\in\\Omega_i} c_{ij}(\\omega)^{\\frac{\\sigma-1}{\\sigma}} d\\omega \\right]^{\\frac{\\sigma}{\\sigma-1}}$$`}
+                <p>
+                  {`This preference structure implies that spending on a specific variety is given by:`}
+                </p>
+                {`$$x_{ij}(\\omega) = \\left( \\frac{p_{ij}(\\omega)}{P_j} \\right)^{1-\\sigma} X_j$$`}
+              </div>
+            )}
 
-            <div style={card}>
-              <h4>Interactive Lab: Markup Calculator</h4>
-              <div style={beforeTouchBox}><strong>Before moving sliders:</strong> At sigma=2, markup = 100% of MC. At sigma=10, markup = only 11%.</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '20px', marginTop: '12px' }}>
-                <div>
-                  <Slider label="Elasticity sigma" value={dsSigma} setter={setDsSigma} min={1.5} max={10} step={0.5} />
-                  <Slider label="Wage w" value={dsW} setter={setDsW} min={5} max={30} step={1} />
-                  <Slider label="Productivity a" value={dsA} setter={setDsA} min={0.5} max={5} step={0.5} />
-                  <Slider label="Fixed Cost F" value={dsF} setter={setDsF} min={1} max={20} step={1} />
-                  <Slider label="Labour Supply L" value={dsL} setter={setDsL} min={50} max={500} step={10} />
-                  <button onClick={resetDS} className="tab-btn" style={{ marginTop: '8px' }}>Reset</button>
+            {activeMathStep === 2 && (
+              <div>
+                <h4>Derivations &amp; Size Invariance</h4>
+                <p>
+                  {`Because the elasticity of demand is constant at $\\epsilon = \\sigma$, the pricing curve PP becomes completely horizontal:`}
+                </p>
+                {`$$p_i = \\frac{\\sigma}{\\sigma-1} \\frac{w_i}{\\varphi_i}$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title">⚖️ Size Invariance Proof</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Free entry forces profit $\\pi = 0$. Substituting markup pricing pins down the firm output size as invariant to population:`}
+                    {`$$q_i = (\\sigma - 1)\\varphi_i f_i$$`}
+                    {`As a result, population scale shocks do not alter firm sizes. Instead, they map entirely into variety expansion:`}
+                    {`$$M_i = \\frac{L_i}{\\sigma f_i}$$`}
+                  </p>
                 </div>
-                <div>
-                  <div style={resultBox}>
-                    <p>Marginal cost MC = w/a: <strong>{dsMC.toFixed(2)}</strong></p>
-                    <p>Optimal price p*: <strong>{dsP.toFixed(2)}</strong></p>
-                    <p>Markup (p* - MC): <strong>{dsMarkup}</strong> ({((Number(dsMarkup) / dsMC) * 100).toFixed(1)}% of MC)</p>
-                    <p>Equilibrium # firms n: <strong>{dsN}</strong></p>
-                    <p>Profit per firm: <strong>0</strong> (free entry)</p>
+              </div>
+            )}
+
+            {activeMathStep === 3 && (
+              <div>
+                <h4>Structural Gravity &amp; Welfare Scaling</h4>
+                <p>
+                  {`Aggregating spending across varieties yields the structural gravity spending share model from origin $i$ to destination $j$:`}
+                </p>
+                {`$$\\pi_{ij} = \\frac{M_i p_{ij}^{1-\\sigma}}{\\sum_l M_l p_{lj}^{1-\\sigma}} = \\frac{\\frac{L_i}{f_i} \\varphi_i^{\\sigma-1} (w_i d_{ij})^{1-\\sigma}}{\\sum_l \\frac{L_l}{f_l} \\varphi_l^{\\sigma-1} (w_l d_{lj})^{1-\\sigma}}$$`}
+                <IntuitionBox title="One gravity equation, three different stories">
+                  {`Set the three workhorse models side by side: Krugman: $\\pi_{ij} \\propto \\frac{L_i}{f_i} \\varphi_i^{\\sigma - 1}(d_{ij}w_i)^{1-\\sigma}$, Eaton-Kortum: $\\pi_{ij} \\propto T_i (d_{ij}w_i)^{-\\theta}$, Armington: $\\pi_{ij} \\propto b_i a_i^{\\sigma-1}(d_{ij}w_i)^{1-\\sigma}$. All are "origin shifter × (cost)^-elasticity, normalized by destination competition" — they differ in what the shifter means and in what the elasticity represents (a taste parameter in Krugman/Armington vs. a technology-heterogeneity parameter in EK). Aggregate trade data alone cannot tell these stories apart — only micro data can.`}
+                </IntuitionBox>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">🏆 Population Scale Welfare Effect</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`This share structure links home variety availability to real wages and welfare via:`}
+                    {`$$\\frac{w_i}{P_i} = A_i L_i^{\\frac{1}{\\sigma - 1}} \\pi_{ii}^{-\\frac{1}{\\sigma - 1}}$$`}
+                    {`Larger populations sustain more domestic varieties, directly lifting utility due to consumers' love of variety.`}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Tab 2 Interactive Sandbox */}
+          <div className="sliders-grid">
+            <div className="slider-card">
+              <label>
+                <span>Home Population ($L_H$):</span>
+                <span className="val-highlight">{krug80LH}</span>
+              </label>
+              <input 
+                type="range" min="50" max="200" step="5"
+                value={krug80LH} onChange={(e) => setKrug80LH(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>Foreign Population ($L_F$):</span>
+                <span className="val-highlight">{krug80LF}</span>
+              </label>
+              <input 
+                type="range" min="50" max="200" step="5"
+                value={krug80LF} onChange={(e) => setKrug80LF(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>{`Iceberg Trade Cost ($d_{HF}$):`}</span>
+                <span className="val-highlight">{krug80D.toFixed(2)}</span>
+              </label>
+              <input 
+                type="range" min="1.0" max="2.0" step="0.05"
+                value={krug80D} onChange={(e) => setKrug80D(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+          </div>
+
+          <div className="svg-canvas-row">
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-primary)' }}>
+                🏠 Home Market Access and Trade Shares
+              </div>
+              <div className="implications-panel" style={{ margin: 0, height: '100%', justifyContent: 'space-around' }}>
+                <div style={{ fontWeight: 600 }}>Bilateral Sales Allocation Matrix</div>
+                <div className="implications-grid">
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.piHH * 100).toFixed(1)}%</div>
+                    <div className="implication-stat-lbl">{`Home Local Share ($\\pi_{HH}$)`}</div>
                   </div>
-                  <div ref={dsMarkupRef} style={{ height: '260px', width: '100%', marginTop: '16px' }} />
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.piFH * 100).toFixed(1)}%</div>
+                    <div className="implication-stat-lbl">{`Foreign Import Share ($\\pi_{FH}$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.piHF * 100).toFixed(1)}%</div>
+                    <div className="implication-stat-lbl">{`Home Export Share ($\\pi_{HF}$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.piFF * 100).toFixed(1)}%</div>
+                    <div className="implication-stat-lbl">{`Foreign Local Share ($\\pi_{FF}$)`}</div>
+                  </div>
+                </div>
+                <div style={{ marginTop: '8px' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Home Demand Allocation:</span>
+                  <div className="share-bar-container">
+                    <div className="share-bar-segment" style={{ width: `${krug80Data.piHH * 100}%`, backgroundColor: 'var(--accent-primary)' }}>
+                      Local
+                    </div>
+                    <div className="share-bar-segment" style={{ width: `${krug80Data.piFH * 100}%`, backgroundColor: 'var(--accent-secondary)' }}>
+                      Imports
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="lesson-card" id="m4-ds3">
-            <h3>Lesson 3: Free Entry and Number of Firms</h3>
-            <div style={formulaBox}>
-              <strong>n = L / (sigma x F)</strong>
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-secondary)' }}>
+                🌐 Endogenous General Equilibrium Dashboard
+              </div>
+              <div className="implications-panel" style={{ margin: 0, height: '100%', justifyContent: 'space-around' }}>
+                <div className="implications-grid">
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val purple-text">{(krug80Data.wH).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">{`Home Wage ($w_H$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val purple-text">{(krug80Data.wF).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">{`Foreign Wage ($w_F$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.welfareH).toFixed(2)}</div>
+                    <div className="implication-stat-lbl">{`Home Real Income ($w_H/P_H$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(krug80Data.welfareF).toFixed(2)}</div>
+                    <div className="implication-stat-lbl">{`Foreign Real Income ($w_F/P_F$)`}</div>
+                  </div>
+                </div>
+                <p style={{ margin: '12px 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                  {`Home-Market Effect: A larger home population concentrates variety production locally. This raises the Home wage rate relative to Foreign ($w_H > 1.0$) and shields local buyers from trade transport costs.`}
+                </p>
+              </div>
             </div>
-            <p>Larger markets → more firms, not larger firms. Average firm size is independent of L — a key prediction of monopolistic competition models.</p>
-            <div ref={dsFirmCountRef} style={{ height: '300px', width: '100%', margin: '16px 0' }} />
-            <div style={noticeBox}><strong>Key insight:</strong> Varieties scale linearly with market size. Bigger markets create more variety — the source of gains from economic integration.</div>
+          </div>
+          <IntuitionBox title="Home-market effect">
+            {`Countries tend to export the goods for which they have large domestic demand. With scale economies, production wants to concentrate in one place; with trade costs, the profit-maximizing place is near the big market — produce where demand is, export to the rest. This reverses neoclassical logic, where large demand for a good makes you an importer of it.`}
+          </IntuitionBox>
+
+          <div className="stepper-nav-footer">
+            <button className="quiz-btn quiz-btn-secondary" onClick={() => setActiveMathStep((prev) => Math.max(1, prev - 1))} disabled={activeMathStep === 1}>
+              ← Back
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Step {activeMathStep} of 3</span>
+            <button className="quiz-btn quiz-btn-primary" onClick={() => setActiveMathStep((prev) => Math.min(3, prev + 1))} disabled={activeMathStep === 3}>
+              Next Step →
+            </button>
           </div>
         </div>
       )}
 
-      {/* ════════════════════ SUB 4.3: MELITZ ════════════════════ */}
-      {moduleTab === 'sub3' && (
-        <div>
-          <div className="lesson-card" style={{ borderLeft: `4px solid ${accent}` }}>
-            <h3 style={{ color: accent }}>Firm Heterogeneity: Melitz (2003)</h3>
-            <p>Krugman assumed all firms are <strong>identical</strong>. In reality firms vary enormously in productivity — and <strong>only the most productive firms export</strong>. Melitz (2003) introduced firm heterogeneity, generating predictions about <em>who trades and who gains</em>.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', margin: '16px 0' }}>
-              <div style={meansBox}><strong>Productivity draws:</strong><br />Firms draw productivity phi from G(phi) upon entry.</div>
-              <div style={meansBox}><strong>Fixed export costs:</strong><br />Exporting requires a sunk fixed cost f_x (learning regulations, building distribution).</div>
-              <div style={meansBox}><strong>Selection:</strong><br />Only firms above cutoff phi*_x can profitably export. Others serve only domestic.</div>
-            </div>
-            <TutorTip tip="Melitz's key insight: trade liberalisation forces low-productivity firms to exit while expanding the most productive exporters. Average productivity rises — a new source of welfare gain beyond Krugman's love-of-variety gains." />
+      {/* ======================================================== */}
+      {/* TAB 4.3: MELITZ CLOSED ECONOMY */}
+      {/* ======================================================== */}
+      {moduleTab === "4.3 Melitz Model: Closed Economy" && (
+        <div className="lesson-step-content">
+          <div className="stepper-section-title">
+            4.3 Melitz Model: Closed Economy
           </div>
 
-          <div className="lesson-card" id="m4-mel1">
-            <h3>Lesson 1: Productivity Cutoffs</h3>
-            <ul style={{ lineHeight: 2.2, paddingLeft: '20px' }}>
-              <li>phi &lt; phi*_d: <strong>Exit</strong></li>
-              <li>phi*_d &le; phi &lt; phi*_x: <strong>Domestic only</strong></li>
-              <li>phi &ge; phi*_x: <strong>Produce and export</strong></li>
-            </ul>
-            <div style={formulaBox}>
-              <strong>phi*_x = tau x (f_x / f_d)^(1/(sigma-1)) x phi*_d</strong>
-            </div>
-            <p>Since tau &gt; 1 and f_x &gt; f_d, we always have phi*_x &gt; phi*_d — <strong>exporters are more productive</strong> than non-exporters.</p>
+          <div className="stepper-header">
+            <button className={`step-indicator-btn ${activeMathStep === 1 ? 'active' : ''}`} onClick={() => setActiveMathStep(1)}>
+              <span className="step-num-badge">1</span> Step 1: Productivity draws
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 2 ? 'active' : ''}`} onClick={() => setActiveMathStep(2)}>
+              <span className="step-num-badge">2</span> Step 2: ZCP &amp; FE Curves
+            </button>
           </div>
 
-          <div className="lesson-card" id="m4-mel2">
-            <h3>Lesson 2: Interactive Threshold Lab</h3>
-            <div style={card}>
-              <div style={beforeTouchBox}><strong>Watch the cutoffs:</strong> phi*_d stays fixed (normalised = 1). phi*_x moves with trade costs and cost ratios.</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '20px', marginTop: '12px' }}>
-                <div>
-                  <Slider label="Elasticity sigma" value={melSigma} setter={setMelSigma} min={1.5} max={8} step={0.5} />
-                  <Slider label="Domestic fixed cost f_d" value={melFd} setter={setMelFd} min={1} max={20} step={1} />
-                  <Slider label="Export fixed cost f_x" value={melFx} setter={setMelFx} min={2} max={50} step={1} />
-                  <Slider label="Trade cost tau" value={melTau} setter={setMelTau} min={1.01} max={2.5} step={0.05} />
-                  <button onClick={resetMelitz} className="tab-btn" style={{ marginTop: '8px' }}>Reset</button>
-                  <div style={resultBox}>
-                    <p>Domestic cutoff phi*_d: <strong>1.00</strong> (normalised)</p>
-                    <p>Export cutoff phi*_x: <strong>{melPhiX.toFixed(3)}</strong></p>
-                    <p>Exporters are <strong>{melPhiX.toFixed(1)}x</strong> more productive than minimum firms</p>
-                  </div>
-                </div>
-                <div>
-                  <div ref={melitzThreshRef} style={{ height: '280px', width: '100%' }} />
-                  <div ref={melitzDistRef} style={{ height: '260px', width: '100%', marginTop: '16px' }} />
+          <div className="stepper-card-body">
+            {activeMathStep === 1 && (
+              <div>
+                <h4>Firm-Level Productivity Heterogeneity</h4>
+                <p>
+                  {`Melitz (2003) introduces firm heterogeneity. Upon paying a sunk entry fee $f_e$, firms draw their productivity $\\varphi$ from a known density $g(\\varphi)$, where the wage is normalized to $w = 1$.`}
+                </p>
+                {`$$l(\\varphi) = f + \\frac{q}{\\varphi}$$`}
+                <p>
+                  {`Optimal firm-level pricing, sales, and profits are written as:`}
+                </p>
+                {`$$p(\\varphi) = \\frac{\\sigma}{\\sigma-1} \\frac{1}{\\varphi}, \\quad r(\\varphi) = R \\left( \\frac{p(\\varphi)}{P} \\right)^{1-\\sigma}, \\quad \\pi(\\varphi) = \\frac{r(\\varphi)}{\\sigma} - f$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title">⚖️ Relative Success &amp; Average Productivity Index</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Comparing any two firms reveals the relative success identity:`}
+                    {`$$\\frac{r(\\varphi_1)}{r(\\varphi_2)} = \\left( \\frac{\\varphi_1}{\\varphi_2} \\right)^{\\sigma - 1}$$`}
+                    {`The representative productivity index aggregates the continuum of active firms:`}
+                    {`$$\\tilde{\\varphi}(\\varphi^*) = \\left[ \\int_{\\varphi^*}^\\infty \\varphi^{\\sigma - 1} \\mu(\\varphi) d\\varphi \\right]^{\\frac{1}{\\sigma - 1}}$$`}
+                    {`where the aggregate price index is represented by:`}
+                    {`$$P = M^{\\frac{1}{1-\\sigma}} p(\\tilde{\\varphi})$$`}
+                  </p>
                 </div>
               </div>
-              <div style={tryThisBox}><strong>Try this:</strong> Raise tau (trade cost) from 1.4 to 2.2. phi*_x rises sharply — fewer firms can profitably export. This shows how trade liberalisation (lower tau) induces firm selection.</div>
+            )}
+
+            {activeMathStep === 2 && (
+              <div>
+                <h4>Cutoff Equilibrium (ZCP &amp; FE)</h4>
+                <p>
+                  {`The closed-economy equilibrium determines the survival cutoff $\\varphi^*$ (where $\\pi(\\varphi^*) = 0$) and average profit $\\bar{\\pi}$ using two equations:`}
+                </p>
+                <DefinitionBox title="Entry technology and the cutoff">
+                  {`To enter, a prospective firm pays a sunk cost $f_e$ and then draws productivity $\\varphi$ from a known distribution (pdf $g$, cdf $G$) — entry is a lottery. A firm with $\\pi(\\varphi) < 0$ exits immediately; since profit increases with productivity, exit is a cutoff rule: stay iff $\\varphi \\ge \\varphi^*$, where profit at the cutoff equals zero. Each period, incumbents die with probability $\\delta$, so a survivor's expected value is expected profit divided by $\\delta$. The distribution of active firms is the entry distribution truncated at the cutoff.`}
+                </DefinitionBox>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">📉 Step 1: Zero Cutoff Profit (ZCP)</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Firms at the survival cutoff break even: $\\pi(\\varphi^*) = 0$. This defines the ZCP curve (downward-sloping):`}
+                    {`$$\\bar{\\pi} = f \\cdot k(\\varphi^*), \\quad k(\\varphi^*) \\equiv \\left( \\frac{\\tilde{\\varphi}(\\varphi^*)}{\\varphi^*} \\right)^{\\sigma - 1} - 1$$`}
+                  </p>
+                </div>
+                <div className="sub-step-box">
+                  <span className="sub-step-title">📈 Step 2: Free Entry (FE) Curve</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Entrants pay a sunk entry fee $f_e$ and face an exogenous exit shock rate $\\delta$, yielding the FE curve (upward-sloping):`}
+                    {`$$\\bar{\\pi} = \\frac{\\delta f_e}{1 - G(\\varphi^*)}$$`}
+                  </p>
+                </div>
+                <IntuitionBox title="Closed economy: heterogeneity is invisible in aggregates">
+                  {`Strikingly, the closed-economy aggregate predictions are those of Krugman-1980 with a representative firm $\\tilde{\\varphi}$: welfare is $W = P^{-1} = M^{\\frac{1}{\\sigma - 1}}\\frac{\\sigma - 1}{\\sigma}\\tilde{\\varphi}$. Heterogeneity only earns its keep when trade is costly and exporting has a fixed cost — then market access differs across firms, selection bites, and the distribution starts moving aggregates.`}
+                </IntuitionBox>
+              </div>
+            )}
+          </div>
+
+          {/* Tab 3 Interactive Sandbox */}
+          <div className="sliders-grid">
+            <div className="slider-card">
+              <label>
+                <span>Sunk Entry Cost ($f_e$):</span>
+                <span className="val-highlight">{melFe.toFixed(1)}</span>
+              </label>
+              <input 
+                type="range" min="0.5" max="5.0" step="0.1"
+                value={melFe} onChange={(e) => setMelFe(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>Operating Fixed Cost ($f$):</span>
+                <span className="val-highlight">{melF.toFixed(1)}</span>
+              </label>
+              <input 
+                type="range" min="0.5" max="3.0" step="0.1"
+                value={melF} onChange={(e) => setMelF(Number(e.target.value))} 
+                className="range-slider"
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>Exit Shock Rate ($\delta$):</span>
+                <span className="val-highlight">{melDelta.toFixed(2)}</span>
+              </label>
+              <input 
+                type="range" min="0.05" max="0.30" step="0.01"
+                value={melDelta} onChange={(e) => setMelDelta(Number(e.target.value))} 
+                className="range-slider"
+              />
             </div>
           </div>
 
-          <div className="lesson-card" id="m4-mel3">
-            <h3>Lesson 3: Aggregate Productivity and Welfare</h3>
-            <p>Trade liberalisation raises <strong>average industry productivity</strong>. The most productive exporters expand; least productive firms exit. Average productivity rises — a <em>productivity selection effect</em> on top of variety gains.</p>
-            <div style={formulaBox}>
-              <strong>Aggregate welfare gain = Variety gains + Productivity selection gains</strong>
+          <div className="svg-canvas-row">
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-primary)' }}>
+                📈 Melitz Autarky Cutoff G.E.
+              </div>
+              <div className="svg-wrapper">
+                <svg viewBox="0 0 360 200" width="100%" height="100%">
+                  {/* Axes */}
+                  <line x1="40" y1="170" x2="340" y2="170" className="svg-axis" />
+                  <line x1="40" y1="20" x2="40" y2="170" className="svg-axis" />
+                  <text x="190" y="195" className="svg-text" textAnchor="middle" style={{ fontWeight: 600 }}>Cutoff φ*</text>
+                  <text x="15" y="95" className="svg-text" textAnchor="middle" transform="rotate(-90 15 95)" style={{ fontWeight: 600 }}>Avg Profit π</text>
+
+                  {/* ZCP curve */}
+                  {(() => {
+                    const zcpY = 170 - (melAutData.avgProfit / 5) * 140;
+                    return (
+                      <line x1="40" y1={zcpY} x2="340" y2={zcpY} className="svg-curve" stroke="var(--accent-primary)" />
+                    );
+                  })()}
+
+                  {/* FE curve */}
+                  <path 
+                    d={Array.from({ length: 30 }, (_, idx) => {
+                      const phiVal = 1.0 + idx * 0.1;
+                      const profitVal = melDelta * melFe * Math.pow(phiVal, theta);
+                      const x = 40 + ((phiVal - 1.0) / 2.0) * 300;
+                      const y = 170 - (Math.min(5.0, profitVal) / 5) * 140;
+                      return `${idx === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ')} 
+                    className="svg-curve" 
+                    stroke="var(--accent-secondary)" 
+                  />
+
+                  {/* Intersection point */}
+                  {(() => {
+                    const xPt = 40 + ((melAutData.phiStar - 1.0) / 2.0) * 300;
+                    const yPt = 170 - (melAutData.avgProfit / 5) * 140;
+                    return (
+                      <>
+                        <line x1={xPt} y1="170" x2={xPt} y2={yPt} className="svg-guide-line" stroke="var(--text-muted)" />
+                        <circle cx={xPt} cy={yPt} r="6" fill="var(--accent-warning)" className="svg-marker" />
+                        <text x={xPt - 5} y={yPt - 12} className="svg-text-bold svg-text">φ*</text>
+                      </>
+                    );
+                  })()}
+                </svg>
+              </div>
+              <div className="svg-legend">
+                <span><span style={{ color: 'var(--accent-primary)' }}>■</span> Zero Cutoff Profit (ZCP)</span>
+                <span><span style={{ color: 'var(--accent-secondary)' }}>■</span> Free Entry (FE)</span>
+              </div>
             </div>
-            <div style={noticeBox}><strong>Empirical prediction:</strong> Exporters are larger, more productive, pay higher wages, and employ more workers than non-exporters — robustly confirmed in data from all countries.</div>
+
+            <div className="svg-canvas-card">
+              <div className="svg-title" style={{ color: 'var(--accent-secondary)' }}>
+                📊 Selection cutoffs
+              </div>
+              <div className="implications-panel" style={{ margin: 0, height: '100%', justifyContent: 'space-around' }}>
+                <div className="implications-grid">
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(melAutData.phiStar).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">{`Survival Cutoff ($\\varphi^*$)`}</div>
+                  </div>
+                  <div className="implication-stat-card">
+                    <div className="implication-stat-val">{(melAutData.avgProfit).toFixed(3)}</div>
+                    <div className="implication-stat-lbl">{`Average Net Profit ($\\bar{\\pi}$)`}</div>
+                  </div>
+                </div>
+                <p style={{ margin: '12px 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                  {`Closed Economy Cutoff: The survival cutoff $\\varphi^*$ marks the boundary productivity level. Firms with productivity $\\varphi < \\varphi^*$ cannot cover fixed operational fees and must immediately exit. Sunk entry risk ($f_e$) shifts the FE curve, altering survival boundaries.`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="stepper-nav-footer">
+            <button className="quiz-btn quiz-btn-secondary" onClick={() => setActiveMathStep((prev) => Math.max(1, prev - 1))} disabled={activeMathStep === 1}>
+              ← Back
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Step {activeMathStep} of 2</span>
+            <button className="quiz-btn quiz-btn-primary" onClick={() => setActiveMathStep((prev) => Math.min(2, prev + 1))} disabled={activeMathStep === 2}>
+              Next Step →
+            </button>
           </div>
         </div>
       )}
 
-      {/* ════════════════════ SUB 4.4: MELITZ-PARETO ════════════════════ */}
-      {moduleTab === 'sub4' && (
-        <div>
-          <div className="lesson-card" style={{ borderLeft: `4px solid ${accent}` }}>
-            <h3 style={{ color: accent }}>Tractable Melitz: Pareto Productivity</h3>
-            <p>General Melitz has no closed-form solution for trade flows. But with a <strong>Pareto productivity distribution</strong>, everything collapses to a gravity equation — connecting New Trade Theory directly to Module 3's empirical framework.</p>
-            <TutorTip tip="Chaney (2008) showed that Pareto-distributed productivity in the Melitz framework generates a gravity equation with the Pareto shape k as the trade elasticity. This bridges the micro theory of firms to the macro empirics of gravity." />
+      {/* ======================================================== */}
+      {/* TAB 4.4: MELITZ OPEN ECONOMY */}
+      {/* ======================================================== */}
+      {moduleTab === "4.4 Melitz Model: Open Economy" && (
+        <div className="lesson-step-content">
+          <div className="stepper-section-title">
+            4.4 Melitz Model: Open Economy
           </div>
 
-          <div className="lesson-card" id="m4-par1">
-            <h3>Lesson 1: Pareto Distribution of Productivity</h3>
-            <div style={formulaBox}>
-              <strong>G(phi) = 1 - (phi_min / phi)^k</strong>, &nbsp; phi &ge; phi_min<br />
-              k &gt; 0: shape parameter (higher k = less dispersion)
-            </div>
-            <p>Required shape condition for finite average productivity:</p>
-            <div style={formulaBox}><strong>k &gt; sigma - 1</strong></div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(185px, 1fr))', gap: '10px', margin: '12px 0' }}>
-              {[['k', 'Pareto shape — governs firm productivity dispersion'], ['sigma', 'CES elasticity of substitution'], ['k/(sigma-1)', 'Key ratio: governs selection intensity'], ['tau', 'Iceberg trade cost'], ['f_x/f_d', 'Ratio of export to domestic fixed costs']].map(([s, d]) => (
-                <div key={s} style={meansBox}><strong>{s}</strong><br /><span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{d}</span></div>
-              ))}
-            </div>
+          <div className="stepper-header">
+            <button className={`step-indicator-btn ${activeMathStep === 1 ? 'active' : ''}`} onClick={() => setActiveMathStep(1)}>
+              <span className="step-num-badge">1</span> Step 1: Stylized Facts
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 2 ? 'active' : ''}`} onClick={() => setActiveMathStep(2)}>
+              <span className="step-num-badge">2</span> Step 2: Sorting continuum
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 3 ? 'active' : ''}`} onClick={() => setActiveMathStep(3)}>
+              <span className="step-num-badge">3</span> Step 3: Reallocation selection
+            </button>
           </div>
 
-          <div className="lesson-card" id="m4-par2">
-            <h3>Lesson 2: Gravity from Firm Heterogeneity</h3>
-            <div style={formulaBox}>
-              <strong>chi_x = tau^(-k) x (f_x/f_d)^(1 - k/(sigma-1))</strong><br />
-              <strong>X_ij proportional to Y_i x Y_j / tau^k</strong>
-            </div>
-            <p>The Pareto shape parameter <strong>k</strong> acts as the trade elasticity — replacing sigma from the Armington gravity of Module 3. Here k also governs the extent of firm selection.</p>
+          <div className="stepper-card-body">
+            {activeMathStep === 1 && (
+              <div>
+                <h4>What Firm-Level Data Revealed (Stylized Facts)</h4>
+                <p>
+                  {`In Krugman's model, all firms are clones: every firm exports, and exports the same amount. When firm-level micro data became available in the 1990s, reality looked very different:`}
+                </p>
+                <DefinitionBox title="The stylized facts">
+                  <strong>Exporting is rare:</strong> In 2000, only about 4% of U.S. firms exported at all; in manufacturing, only about 18% of firms exported, and even exporters shipped only ~14% of their output abroad.
+                  <br /><br />
+                  <strong>Exports are concentrated:</strong> The top 10% of exporters accounted for 96% of total U.S. exports; firms exporting 5+ products to 5+ countries were 11.9% of exporters but carried 92% of export value — strongly suggestive of a fat-tailed (Pareto-like) size distribution.
+                  <br /><br />
+                  <strong>Exporters are different ("export premia"):</strong> Compared with non-exporters in the same industry, exporters are larger (log employment premium $\approx 0.97$), more productive, pay higher wages, and are more capital- and skill-intensive.
+                  <br /><br />
+                  <strong>Both margins matter:</strong> Exporters make more products (extensive margin) and ship more per product (intensive margin).
+                </DefinitionBox>
+                <IntuitionBox title="Why this kills the representative firm">
+                  {`If exporting were just a matter of shipping costs, firms would differ only in degree. Instead the data show selection: a small elite of exceptional firms does all the exporting. That pattern demands a model where firms differ in productivity and there's a fixed cost of exporting so only the best find it worthwhile — delivering a new gain from trade: reallocation of resources toward more productive firms, raising aggregate productivity.`}
+                </IntuitionBox>
+              </div>
+            )}
 
-            <div style={card}>
-              <h4>Interactive Lab: Melitz-Pareto Simulator</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '20px' }}>
-                <div>
-                  <Slider label="Pareto shape k" value={parK} setter={setParK} min={2} max={8} step={0.5} />
-                  <Slider label="Elasticity sigma" value={parSigma} setter={setParSigma} min={1.5} max={7} step={0.5} />
-                  <Slider label="Domestic fixed cost f_d" value={parFd} setter={setParFd} min={1} max={20} step={1} />
-                  <Slider label="Export fixed cost f_x" value={parFx} setter={setParFx} min={2} max={50} step={1} />
-                  <Slider label="Trade cost tau" value={parTau} setter={setParTau} min={1.01} max={3.0} step={0.05} />
-                  <button onClick={resetPareto} className="tab-btn" style={{ marginTop: '8px' }}>Reset</button>
+            {activeMathStep === 2 && (
+              <div>
+                <h4>The Firm Sorting Continuum</h4>
+                <p>
+                  {`When trade opens across $n$ symmetric external partners, exporting requires paying an additional fixed cost $f_x > 0$ and iceberg friction $\\tau > 1$. Firms sort along the productivity axis $\\varphi$ based on the linkage equation:`}
+                </p>
+                {`$$\\varphi^*_x = \\varphi^* \\tau \\left( \\frac{f_x}{f} \\right)^{\\frac{1}{\\sigma - 1}}$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title">⚡ Firm Partitioning Zones</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`This sequence divides firms into three performance segments:`}
+                    <br />
+                    {`1. Exit Zone: $\\varphi < \\varphi^*$ (too unproductive to survive)`}
+                    <br />
+                    {`2. Domestic Market Only: $\\varphi^* \\le \\varphi < \\varphi_x^*$ (can survive locally but not export)`}
+                    <br />
+                    {`3. Exporting Elite: $\\varphi \\ge \\varphi_x^*$ (can profitably export)`}
+                  </p>
                 </div>
-                <div>
-                  <div style={resultBox}>
-                    <p>Shape condition (k &gt; sigma-1): <strong style={{ color: parCondition ? '#10b981' : '#ef4444' }}>{parCondition ? `Met (k=${parK} > ${parSigma - 1})` : `Not met (k=${parK} <= ${parSigma - 1})`}</strong></p>
-                    <p>Export fraction chi_x: <strong>{parExportFrac}</strong></p>
-                    <p>Trade elasticity w.r.t. tau: <strong>-{parK.toFixed(1)}</strong></p>
-                    <p>Gains from trade (%): <strong>{parGFT}</strong></p>
-                  </div>
-                  <div ref={paretoRef} style={{ height: '300px', width: '100%', marginTop: '16px' }} />
-                  <div style={noticeBox}><strong>Notice:</strong> Higher trade cost tau dramatically reduces the export fraction. Higher k (less dispersion) amplifies this — trade liberalisation has larger selection effects with more dispersed firms.</div>
+                <IntuitionBox title="The reallocation mechanism, told through the labor market">
+                  {`Why should trade kill the weakest home-market firms, which do not even export? Follow the wage. Trade opens profitable foreign opportunities for the most productive firms; they expand, bidding up demand for labor. The real wage (relative to the price index) rises. Firms near the old cutoff, which broke even at the old factor costs, now make losses — they exit. Full employment then reallocates their workers to the expanding exporters — market shares move up the productivity ladder.`}
+                </IntuitionBox>
+              </div>
+            )}
+
+            {activeMathStep === 3 && (
+              <div>
+                <h4>Open Economy ZCP &amp; Welfare Selection Effect</h4>
+                <p>
+                  {`Bilateral export profits shift the open-economy ZCP curve upward:`}
+                </p>
+                {`$$\\bar{\\pi} = f \\cdot k(\\varphi^*) + p_x n f_x k(\\varphi^*_x), \\quad p_x \\equiv \\frac{1-G(\\varphi^*_x)}{1-G(\\varphi^*)}$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title">📈 Trade Selection Welfare Proof</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Because the open-economy ZCP curve shifts up, it intersects the static Free Entry (FE) curve at a higher survival cutoff: $\\varphi^* > \\varphi^*_a$.`}
+                    {`Expanding exporters bid up wages, crushing low-productivity domestic firms. This intra-industry reallocation of workers to elite plants directly lifts real wages and welfare:`}
+                    {`$$W = \\frac{\\sigma-1}{\\sigma} \\left(\\frac{L}{\\sigma f}\\right)^{\\frac{1}{\\sigma-1}} \\varphi^*$$`}
+                  </p>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="lesson-card" id="m4-par3">
-            <h3>Lesson 3: Connecting Modules 3 and 4</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', margin: '12px 0' }}>
-              <div style={meansBox}><strong>Armington (Module 3)</strong><br />Trade elasticity = sigma<br />All firms are symmetric<br />Domestic share pi_nn drives gains</div>
-              <div style={meansBox}><strong>Melitz-Pareto (Module 4)</strong><br />Trade elasticity = k (Pareto shape)<br />Firms differ in productivity phi<br />Selection + variety both drive gains</div>
-              <div style={meansBox}><strong>Shared prediction</strong><br />Both generate gravity: X_ij proportional to Y_i Y_j / d_ij^theta<br />Different structural interpretations of theta</div>
-            </div>
-            <TutorTip tip="The gravity equation is remarkably robust — it arises from Armington, Krugman, and Melitz microfoundations. This is why gravity is the empirical workhorse of trade economics, connecting theory in Modules 3 and 4 to data." />
+          {activeMathStep > 1 && (
+            <>
+              {/* Tab 4 Interactive Sandbox */}
+              <div className="sliders-grid">
+                <div className="slider-card">
+                  <label>
+                    <span>{`Iceberg Shipping Cost ($\\tau$):`}</span>
+                    <span className="val-highlight">{melTau.toFixed(2)}</span>
+                  </label>
+                  <input 
+                    type="range" min="1.1" max="2.0" step="0.05"
+                    value={melTau} onChange={(e) => setMelTau(Number(e.target.value))} 
+                    className="range-slider"
+                  />
+                </div>
+                <div className="slider-card">
+                  <label>
+                    <span>Fixed Export Fee ($f_x$):</span>
+                    <span className="val-highlight">{melFx.toFixed(1)}</span>
+                  </label>
+                  <input 
+                    type="range" min="0.5" max="3.0" step="0.1"
+                    value={melFx} onChange={(e) => setMelFx(Number(e.target.value))} 
+                    className="range-slider"
+                  />
+                </div>
+                <div className="slider-card">
+                  <label>
+                    <span>Domestic Fixed Cost ($f$):</span>
+                    <span className="val-highlight">{melF.toFixed(1)}</span>
+                  </label>
+                  <input 
+                    type="range" min="0.5" max="3.0" step="0.1"
+                    value={melF} onChange={(e) => setMelF(Number(e.target.value))} 
+                    className="range-slider"
+                  />
+                </div>
+              </div>
+
+              <div className="svg-canvas-row">
+                <div className="svg-canvas-card">
+                  <div className="svg-title" style={{ color: 'var(--accent-primary)' }}>
+                    📊 Firm Partition Continuum Axis
+                  </div>
+                  <div className="svg-wrapper">
+                    <svg viewBox="0 0 360 200" width="100%" height="100%">
+                      {/* Sorting axis */}
+                      <line x1="20" y1="100" x2="340" y2="100" stroke="var(--text-muted)" strokeWidth="3" />
+                      <line x1="20" y1="90" x2="20" y2="110" stroke="var(--text-primary)" strokeWidth="2" />
+                      <line x1="340" y1="90" x2="340" y2="110" stroke="var(--text-primary)" strokeWidth="2" />
+
+                      {/* Cutoff markers */}
+                      {(() => {
+                        const startX = 20;
+                        const endX = 340;
+                        const mapX = (phi) => startX + ((phi - 1.0) / 2.0) * (endX - startX);
+                        
+                        const xDom = mapX(melOpenData.phiStar);
+                        const xExp = mapX(melOpenData.phiX);
+
+                        const wExit = xDom - 20;
+                        const wDom = xExp - xDom;
+                        const wExp = 340 - xExp;
+
+                        const cxExit = 20 + wExit / 2;
+                        const cxDom = xDom + wDom / 2;
+                        const cxExp = xExp + wExp / 2;
+
+                        const closeCutoffs = Math.abs(xExp - xDom) < 50;
+                        const textXDom = closeCutoffs ? Math.max(30, xDom - 25) : xDom;
+                        const textXExp = closeCutoffs ? Math.min(330, xExp + 25) : xExp;
+
+                        return (
+                          <>
+                            {/* Zones coloring */}
+                            {/* Exit Zone */}
+                            <rect x="20" y="85" width={Math.max(0, xDom - 20)} height="30" fill="rgba(239, 68, 68, 0.2)" />
+                            <text x={cxExit} y="75" textAnchor="middle" className="svg-text" fill="var(--accent-error)">
+                              {wExit > 50 ? 'Exit' : ''}
+                            </text>
+
+                            {/* Domestic Zone */}
+                            {xExp > xDom && (
+                              <rect x={xDom} y="85" width={Math.max(0, xExp - xDom)} height="30" fill="rgba(59, 130, 246, 0.2)" />
+                            )}
+                            <text x={cxDom} y="75" textAnchor="middle" className="svg-text" fill="var(--accent-primary)">
+                              {wDom > 80 ? 'Domestic Only' : wDom > 45 ? 'Dom.' : ''}
+                            </text>
+
+                            {/* Export Zone */}
+                            {xExp < 340 && (
+                              <rect x={xExp} y="85" width={Math.max(0, 340 - xExp)} height="30" fill="rgba(16, 185, 129, 0.2)" />
+                            )}
+                            <text x={cxExp} y="75" textAnchor="middle" className="svg-text" fill="var(--accent-success)">
+                              {wExp > 65 ? 'Export Elite' : wExp > 40 ? 'Exp.' : ''}
+                            </text>
+
+                            {/* Survival Cutoff Divider on the Bar */}
+                            <line x1={xDom} y1="85" x2={xDom} y2="115" stroke="var(--accent-primary)" strokeWidth="2" />
+                            {/* Tick Line connecting to label */}
+                            <line x1={xDom} y1="115" x2={textXDom} y2="135" stroke="var(--accent-primary)" strokeWidth="1" strokeDasharray="2 2" />
+                            <text x={textXDom} y="150" className="svg-text-bold svg-text" textAnchor="middle" fill="var(--accent-primary)">
+                              {`φ* (Survival)`}
+                            </text>
+
+                            {/* Export Cutoff Divider on the Bar */}
+                            <line x1={xExp} y1="85" x2={xExp} y2="115" stroke="var(--accent-success)" strokeWidth="2" />
+                            {/* Tick Line connecting to label */}
+                            <line x1={xExp} y1="115" x2={textXExp} y2="135" stroke="var(--accent-success)" strokeWidth="1" strokeDasharray="2 2" />
+                            <text x={textXExp} y="150" className="svg-text-bold svg-text" textAnchor="middle" fill="var(--accent-success)">
+                              {`φ*_x (Export)`}
+                            </text>
+                          </>
+                        );
+                      })()}
+                    </svg>
+                  </div>
+                  <div className="svg-legend">
+                    <span><span style={{ color: 'var(--accent-error)' }}>■</span> Exit</span>
+                    <span><span style={{ color: 'var(--accent-primary)' }}>■</span> Domestic</span>
+                    <span><span style={{ color: 'var(--accent-success)' }}>■</span> Exporter</span>
+                  </div>
+                </div>
+
+                <div className="svg-canvas-card">
+                  <div className="svg-title" style={{ color: 'var(--accent-secondary)' }}>
+                    📈 Open Economy ZCP &amp; FE Selection Shift
+                  </div>
+                  <div className="svg-wrapper">
+                    <svg viewBox="0 0 360 200" width="100%" height="100%">
+                      {/* Axes */}
+                      <line x1="40" y1="170" x2="340" y2="170" className="svg-axis" />
+                      <line x1="40" y1="20" x2="40" y2="170" className="svg-axis" />
+                      <text x="190" y="195" className="svg-text" textAnchor="middle" style={{ fontWeight: 600 }}>Cutoff φ*</text>
+                      <text x="15" y="95" className="svg-text" textAnchor="middle" transform="rotate(-90 15 95)" style={{ fontWeight: 600 }}>Avg Profit π</text>
+
+                      {/* FE curve (static) */}
+                      <path 
+                        d={Array.from({ length: 30 }, (_, idx) => {
+                          const phiVal = 1.0 + idx * 0.1;
+                          const profitVal = melDelta * melFe * Math.pow(phiVal, theta);
+                          const x = 40 + ((phiVal - 1.0) / 2.0) * 300;
+                          const y = 170 - (Math.min(5.0, profitVal) / 5) * 140;
+                          return `${idx === 0 ? 'M' : 'L'} ${x} ${y}`;
+                        }).join(' ')} 
+                        className="svg-curve" 
+                        stroke="var(--accent-secondary)" 
+                      />
+
+                      {/* Autarky ZCP reference curve (dashed) */}
+                      {(() => {
+                        const autY = 170 - (melAutData.avgProfit / 5) * 140;
+                        return (
+                          <line x1="40" y1={autY} x2="340" y2={autY} className="svg-curve-dashed" stroke="var(--text-muted)" />
+                        );
+                      })()}
+
+                      {/* Open Economy ZCP line (solid shifting up) */}
+                      {(() => {
+                        const openY = 170 - (melOpenData.avgProfit / 5) * 140;
+                        return (
+                          <line x1="40" y1={openY} x2="340" y2={openY} className="svg-curve curve-shifting" stroke="var(--accent-primary)" />
+                        );
+                      })()}
+
+                      {/* Intersection point - slides up along the static FE curve */}
+                      {(() => {
+                        const xPt = 40 + ((melOpenData.phiStar - 1.0) / 2.0) * 300;
+                        const yPt = 170 - (melOpenData.avgProfit / 5) * 140;
+                        return (
+                          <>
+                            <circle cx={xPt} cy={yPt} r="6" fill="var(--accent-warning)" className="svg-marker" />
+                            <text x={xPt - 12} y={yPt - 8} textAnchor="end" className="svg-text-bold svg-text">E_open</text>
+                          </>
+                        );
+                      })()}
+                    </svg>
+                  </div>
+                  <div className="svg-legend">
+                    <span><span style={{ color: 'var(--accent-primary)' }}>■</span> ZCP (shifted)</span>
+                    <span><span style={{ color: 'var(--accent-secondary)' }}>■</span> FE (static)</span>
+                    <span><span style={{ color: 'var(--text-muted)' }}>--</span> ZCP (original)</span>
+                    <span><span style={{ color: 'var(--accent-warning)' }}>●</span> E_open</span>
+                  </div>
+                  <div className="implications-panel" style={{ margin: 0 }}>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                      {`Labor Channel Selection: Opening trade shifts the ZCP line upward due to exporting profits. The intersection point slides upward along the static FE curve. Exporters expand, bidding up wages and driving the cutoff threshold upward ($\\varphi^* > \\varphi^*_a$), which forces low-productivity domestic firms to exit.`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="stepper-nav-footer">
+            <button className="quiz-btn quiz-btn-secondary" onClick={() => setActiveMathStep((prev) => Math.max(1, prev - 1))} disabled={activeMathStep === 1}>
+              ← Back
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Step {activeMathStep} of 3</span>
+            <button className="quiz-btn quiz-btn-primary" onClick={() => setActiveMathStep((prev) => Math.min(3, prev + 1))} disabled={activeMathStep === 3}>
+              Next Step →
+            </button>
           </div>
         </div>
       )}
 
-      {/* ════════════════════ QUIZ ════════════════════ */}
-      {moduleTab === 'quiz' && <Module4Quiz />}
+      {/* ======================================================== */}
+      {/* TAB 4.5: MELITZ-PARETO & DISTORTED GRAVITY */}
+      {/* ======================================================== */}
+      {moduleTab === "4.5 Melitz-Pareto: Distorted Gravity" && (
+        <div className="lesson-step-content">
+          <div className="stepper-section-title">
+            4.5 Melitz-Pareto: Distorted Gravity
+          </div>
 
+          <div className="stepper-header">
+            <button className={`step-indicator-btn ${activeMathStep === 1 ? 'active' : ''}`} onClick={() => setActiveMathStep(1)}>
+              <span className="step-num-badge">1</span> Step 1: Nested Preferences
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 2 ? 'active' : ''}`} onClick={() => setActiveMathStep(2)}>
+              <span className="step-num-badge">2</span> Step 2: Integrations &amp; Margins
+            </button>
+            <button className={`step-indicator-btn ${activeMathStep === 3 ? 'active' : ''}`} onClick={() => setActiveMathStep(3)}>
+              <span className="step-num-badge">3</span> Step 3: Gravity &amp; Chaney Margin
+            </button>
+          </div>
+
+          <div className="stepper-card-body">
+            {activeMathStep === 1 && (
+              <div>
+                <h4>Nested Preferences &amp; Bounded Pareto Draws</h4>
+                <DefinitionBox title="Environment">
+                  {`Countries $i, j = 1,\\dots,N$; labor endowments $L_i$; iceberg costs $d_{ij}$. Firms are heterogeneous in productivity $\\varphi$. Fixed costs: prospective entrants in $i$ pay a sunk entry cost (in domestic labor) to draw $\\varphi$; upon entry, selling to market $j$ (including the home market) costs a per-market fixed fee, paid in units of destination labor. Monopolistic competition throughout.`}
+                </DefinitionBox>
+                <p>
+                  {`To represent gravity structurally, Melitz-Pareto nests preferences: an upper-tier substitution elasticity $\\sigma > 1$ between origins, and a lower-tier substitution elasticity $\\gamma > 1$ between individual varieties. Factory gate pricing matches:`}
+                </p>
+                {`$$p_{ij}(\\varphi) = \\bar{\\gamma} \\frac{d_{ij}w_i}{\\varphi}, \\quad \\bar{\\gamma} \\equiv \\frac{\\gamma}{\\gamma - 1}$$`}
+                <DefinitionBox title="Nested CES preferences">
+                  {`Upper tier (elasticity $\\sigma > 1$): substitution between country-of-origin composites — the Armington margin. Lower tier (elasticity $\\gamma > 1$): substitution between individual firms within an origin — the Krugman/Melitz margin. Often $\\gamma \\ge \\sigma$: two French firms' products are closer substitutes than "French goods" vs "German goods." Firm demand chains the two tiers:`}
+                  {`$$x_{ij}(\\varphi) \\equiv p_{ij}(\\varphi)q_{ij}(\\varphi) = \\left( \\frac{p_{ij}(\\varphi)}{P_{ij}} \\right)^{1-\\gamma} \\left( \\frac{P_{ij}}{P_j} \\right)^{1-\\sigma} X_j$$`}
+                  {`with bilateral index $P_{ij} = [ \\int p_{ij}(\\varphi)^{1-\\gamma} M_i dG_i(\\varphi) ]^{\\frac{1}{1-\\gamma}}$ and consumer index $P_j = [ \\sum_i P_{ij}^{1-\\sigma} ]^{\\frac{1}{1-\\sigma}}$.`}
+                </DefinitionBox>
+                <DefinitionBox title="Pareto productivity">
+                  {`Productivity is drawn from a Pareto distribution with shape parameter $\\theta > 1$ (dispersion: higher $\\theta$ = more similar firms) and country scale $a_i$. The crucial property: a Pareto distribution truncated from below is still Pareto with the same shape $\\theta$. Since Melitz selection is exactly truncation from below at $\\varphi^*_{ij}$, the distribution of active firms stays Pareto — this is why everything integrates into clean power functions.`}
+                </DefinitionBox>
+                <p>
+                  {`Productivity draws follow a Pareto distribution:`}
+                </p>
+                {`$$G_i(\\varphi) = 1 - \\left( \\frac{\\varphi}{a_i} \\right)^{-\\theta}, \\quad g_i(\\varphi) = \\theta a_i^{\\theta} \\varphi^{-\\theta-1}$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title purple-title">🌟 Superstar Convergence Bound</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`Integrating firm revenues requires that the tail of the productivity distribution declines faster than substitution scales. This establishes the superstar convergence bound:`}
+                    {`$$\\theta > \\gamma - 1$$`}
+                    {`If this condition is violated, the aggregate market size becomes infinite, and the largest superstar firm dominates the entire economy.`}
+                  </p>
+                </div>
+                <IntuitionBox title="Why θ > γ − 1?">
+                  {`Sales rise with productivity, but the Pareto density thins with productivity too. If firms are too heterogeneous relative to how strongly sales reward productivity, a handful of superstars would carry infinite sales. The convergence condition $\\theta > \\gamma - 1$ keeps the superstar tail integrable — the same tension as the analogous condition in Eaton-Kortum.`}
+                </IntuitionBox>
+                <IntuitionBox title="What each parameter will do">
+                  {`Keep a scorecard: $\\gamma$ governs competition between firms (markups, firm-level demand curves); $\\sigma$ governs substitution between countries; $\\theta$ governs how heterogeneous firms are, hence how strong selection margins are. The punchline of this part is which combination of the three ends up as the aggregate trade elasticity — and it will not be the one Armington intuition suggests.`}
+                </IntuitionBox>
+              </div>
+            )}
+
+            {activeMathStep === 2 && (
+              <div>
+                <h4>Bilateral Marketing Access Fees &amp; Entry Mass</h4>
+                <p>
+                  {`Under Pareto, the aggregate marketing and access fees collapse into a constant share of total sales:`}
+                </p>
+                {`$$\\Gamma_{ij} = \\frac{\\theta - \\gamma + 1}{\\theta\\gamma} X_{ij}$$`}
+                <div className="sub-step-box">
+                  <span className="sub-step-title purple-title">⚖️ Endogenous Entry Mass</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`This constant-share collapse pins down the endogenous entry mass parameter dynamically relative to market population and entry scale:`}
+                    {`$$M_i = \\frac{\\gamma - 1}{\\theta\\gamma} \\frac{L_i}{f_i^{(e)}}$$`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeMathStep === 3 && (
+              <div>
+                <h4>Structural Gravity &amp; Chaney's Margin Decomposition</h4>
+                <p>
+                  {`Integrating bilateral trade yields the distorted gravity allocation equation:`}
+                </p>
+                {`$$\\pi_{ij} \\equiv \\frac{X_{ij}}{X_j} = \\frac{A_{ij}(d_{ij}w_i)^{-\\theta\\lambda}}{\\sum_l A_{lj}(d_{lj}w_l)^{-\\theta\\lambda}}$$`}
+                <p>
+                  {`where the distorted trade elasticity coefficient $\\lambda$ satisfies:`}
+                </p>
+                {`$$\\lambda \\equiv \\left[ 1 + \\theta \\left( \\frac{1}{\\sigma - 1} - \\frac{1}{\\gamma - 1} \\right) \\right]^{-1}$$`}
+                <IntuitionBox title="Why 'distorted' gravity — and what the elasticity means">
+                  {`The model looks exactly like Armington/EK gravity from the outside, but in the special case $\\sigma = \\gamma$, the substitution elasticities drop out of the aggregate trade elasticity entirely, leaving just $\\theta$. This is Chaney's margin decomposition: when trade costs fall, existing exporters sell more (intensive margin) and new, less productive firms start exporting (extensive margin) — with Pareto firms these are perfect complements, so the total is always $\\theta$ regardless of $\\sigma$.`}
+                </IntuitionBox>
+                <div className="sub-step-box">
+                  <span className="sub-step-title purple-title">📊 Chaney's Margin Decomposition Panel</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {`When symmetric ($\\sigma = \\gamma$), the distorted elasticity coefficient resolves to $\\lambda = 1$, simplifying trade elasticity to $\\epsilon = \\theta$. Chaney (2008) decomposes this into two margins:`}
+                    {`$$\\epsilon = \\underbrace{(\\sigma - 1)}_\\text{Intensive Margin} + \\underbrace{\\theta - (\\sigma - 1)}_\\text{Extensive Margin}$$`}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Tab 5 Interactive Sandbox */}
+          <div className="sliders-grid">
+            <div className="slider-card">
+              <label>
+                <span>{`Substitution Elasticity ($\\sigma$):`}</span>
+                <span className="val-highlight-purple">{chaneySigma.toFixed(1)}</span>
+              </label>
+              <input 
+                type="range" min="1.5" max="6.0" step="0.1"
+                value={chaneySigma} onChange={(e) => setChaneySigma(Number(e.target.value))} 
+                className="range-slider slider-purple"
+              />
+            </div>
+            <div className="slider-card">
+              <label>
+                <span>{`Pareto Dispersion Parameter ($\\theta$):`}</span>
+                <span className="val-highlight-purple">{chaneyTheta.toFixed(1)}</span>
+              </label>
+              <input 
+                type="range" min="2.0" max="8.0" step="0.1"
+                value={chaneyTheta} onChange={(e) => handleThetaChange(Number(e.target.value))} 
+                className="range-slider slider-purple"
+              />
+            </div>
+          </div>
+
+          <div className="svg-canvas-row">
+            <div className="svg-canvas-card" style={{ gridColumn: 'span 2' }}>
+              <div className="svg-title" style={{ color: 'var(--accent-secondary)' }}>
+                📊 Chaney's Stacked Trade Elasticity Margin Decomposition
+              </div>
+              <div className="chaney-chart-wrapper">
+                <div className="stacked-bar-container">
+                  <div 
+                    className="stacked-bar-segment intensive" 
+                    style={{ width: `${intensivePct}%` }}
+                  >
+                    {intensivePct > 15 && `Intensive: ${(chaneySigma - 1).toFixed(1)}`}
+                  </div>
+                  <div 
+                    className="stacked-bar-segment extensive" 
+                    style={{ width: `${extensivePct}%` }}
+                  >
+                    {extensivePct > 15 && `Extensive: ${extensiveMargin.toFixed(1)}`}
+                  </div>
+                </div>
+
+                <div className="stacked-legend">
+                  <div className="stacked-legend-item">
+                    <span className="legend-color-dot dot-intensive"></span>
+                    <span>{`Intensive Margin: $\\sigma - 1$ = ${(chaneySigma - 1).toFixed(1)}`}</span>
+                  </div>
+                  <div className="stacked-legend-item">
+                    <span className="legend-color-dot dot-extensive"></span>
+                    <span>{`Extensive Margin: $\\theta - (\\sigma - 1)$ = ${extensiveMargin.toFixed(1)}`}</span>
+                  </div>
+                  <div className="stacked-legend-item" style={{ fontWeight: 'bold' }}>
+                    <span>{`Total Elasticity: $\\theta$ = ${chaneyTheta.toFixed(1)}`}</span>
+                  </div>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
+                {`Margin Implication: Increase the preference substitution parameter $\\sigma$. Observe how the intensive margin expands as consumers respond aggressively to price changes, but the extensive margin shrinks correspondingly. Because marginal exporters enter the market at a negligible scale when goods are highly substitutable, the aggregate elasticity remains locked at $\\theta$.`}
+              </p>
+            </div>
+          </div>
+
+          <div className="stepper-nav-footer">
+            <button className="quiz-btn quiz-btn-secondary" onClick={() => setActiveMathStep((prev) => Math.max(1, prev - 1))} disabled={activeMathStep === 1}>
+              ← Back
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Step {activeMathStep} of 3</span>
+            <button className="quiz-btn quiz-btn-primary" onClick={() => setActiveMathStep((prev) => Math.min(3, prev + 1))} disabled={activeMathStep === 3}>
+              Next Step →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* TAB 4.6: FINAL EXAM */}
+      {/* ======================================================== */}
+      {moduleTab === "4.6 Module 4 Final Exam" && <Module4Quiz />}
     </div>
   );
 }

@@ -417,6 +417,10 @@ export default function Module1Section3({ theme }) {
               <line x1={pathH.peakX} y1={pathH.peakSvgY} x2={pathH.peakX} y2="170" stroke="var(--accent-warning)" strokeWidth="1" strokeDasharray="2 2" />
             </svg>
           </div>
+          <div className="svg-legend" style={{ marginBottom: '8px' }}>
+            <span><span style={{ color: 'var(--accent-primary)' }}>■</span> Home Density</span>
+            <span><span style={{ color: 'var(--accent-warning)' }}>●</span> Mode Peak</span>
+          </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             {"Peak Mode: $z^* \\approx$ "}<strong>{pathH.peakZ.toFixed(2)}</strong>{" (Density value: "}<strong>{pathH.peakY.toFixed(2)}</strong>{")"}
           </div>
@@ -454,6 +458,10 @@ export default function Module1Section3({ theme }) {
               <circle cx={pathF.peakX} cy={pathF.peakSvgY} r="4" fill="var(--accent-warning)" />
               <line x1={pathF.peakX} y1={pathF.peakSvgY} x2={pathF.peakX} y2="170" stroke="var(--accent-warning)" strokeWidth="1" strokeDasharray="2 2" />
             </svg>
+          </div>
+          <div className="svg-legend" style={{ marginBottom: '8px' }}>
+            <span><span style={{ color: 'var(--accent-secondary)' }}>■</span> Foreign Density</span>
+            <span><span style={{ color: 'var(--accent-warning)' }}>●</span> Mode Peak</span>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             {"Peak Mode: $z^* \\approx$ "}<strong>{pathF.peakZ.toFixed(2)}</strong>{" (Density value: "}<strong>{pathF.peakY.toFixed(2)}</strong>{")"}

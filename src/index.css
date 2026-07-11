@@ -427,10 +427,14 @@ button {
 
 .module-sections-nav {
   display: flex;
+  align-items: center;
   gap: 16px;
   margin-bottom: 40px;
   border-bottom: 1px solid var(--card-border);
   padding-bottom: 12px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 .tab-btn {
@@ -440,6 +444,12 @@ button {
   border-radius: var(--border-radius-sm);
   color: var(--text-secondary);
   transition: all 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  box-sizing: border-box;
 }
 
 .tab-btn.active {
@@ -998,6 +1008,24 @@ button {
   margin-top: 8px;
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.svg-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.8rem;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.svg-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 footer {

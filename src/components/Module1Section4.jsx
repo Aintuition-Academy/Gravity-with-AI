@@ -434,7 +434,10 @@ export default function Module1Section4({ theme }) {
               <line x1={pathH.meanX} y1="20" x2={pathH.meanX} y2="170" stroke="var(--accent-warning)" strokeWidth="1.5" strokeDasharray="3 3" />
             </svg>
           </div>
-          
+          <div className="svg-legend" style={{ marginBottom: '8px' }}>
+            <span><span style={{ color: 'var(--accent-primary)' }}>■</span> Home Prices</span>
+            <span><span style={{ color: 'var(--accent-warning)' }}>--</span> E[P_H] Mean</span>
+          </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Expected price $E[P_H] \approx$ <strong>{pathH.meanP.toFixed(2)}</strong>
           </div>
@@ -488,7 +491,10 @@ export default function Module1Section4({ theme }) {
               <line x1={pathF.meanX} y1="20" x2={pathF.meanX} y2="170" stroke="var(--accent-warning)" strokeWidth="1.5" strokeDasharray="3 3" />
             </svg>
           </div>
-          
+          <div className="svg-legend" style={{ marginBottom: '8px' }}>
+            <span><span style={{ color: 'var(--accent-secondary)' }}>■</span> Foreign Prices</span>
+            <span><span style={{ color: 'var(--accent-warning)' }}>--</span> E[P_F] Mean</span>
+          </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Expected price $E[P_F] \approx$ <strong>{pathF.meanP.toFixed(2)}</strong>
           </div>
