@@ -44,6 +44,8 @@ import RSEquilibriumGraph from './components/RSEquilibriumGraph';
 import DFSGraph from './components/DFSGraph';
 import ComparativeStaticsGraph from './components/ComparativeStaticsGraph';
 import GainsFromTradeGraph from './components/GainsFromTradeGraph';
+import Module1Section3 from './components/Module1Section3';
+import Module1Section4 from './components/Module1Section4';
 import { HelpCircle, RefreshCw, Sparkles, BookOpen, Layers, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function App() {
@@ -121,6 +123,12 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
 
+  useEffect(() => {
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+      window.MathJax.typesetPromise();
+    }
+  }, [activeTab, moduleTab]);
+
   const handleStartModule = (moduleId) => {
     if (moduleId === 2) {
       setActiveTab('module2');
@@ -180,6 +188,18 @@ export default function App() {
               className={`tab-btn ${moduleTab === 'theory2' ? 'active' : ''}`}
             >
               1.2 DFS Continuum Model (Lessons 1-8)
+            </button>
+            <button 
+              onClick={() => setModuleTab('theory3')} 
+              className={`tab-btn ${moduleTab === 'theory3' ? 'active' : ''}`}
+            >
+              1.3 Probabilistic Ideas & The Fréchet Frontier
+            </button>
+            <button 
+              onClick={() => setModuleTab('theory4')} 
+              className={`tab-btn ${moduleTab === 'theory4' ? 'active' : ''}`}
+            >
+              1.4 The Probabilistic Ricardian Model: Integrating EK & DFS
             </button>
             <button 
               onClick={() => setModuleTab('quiz')} 
@@ -922,6 +942,16 @@ export default function App() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Submodule 1.3 Contents */}
+          {moduleTab === 'theory3' && (
+            <Module1Section3 theme={theme} />
+          )}
+
+          {/* Submodule 1.4 Contents */}
+          {moduleTab === 'theory4' && (
+            <Module1Section4 theme={theme} />
           )}
 
           {/* Main Quiz Assessment Tab */}
