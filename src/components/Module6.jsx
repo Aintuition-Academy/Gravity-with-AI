@@ -706,6 +706,9 @@ export default function Module6({ theme, setActiveTab }) {
               Module 6
             </span>
             <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>The Structural Gravity Model</h2>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '6px', fontStyle: 'italic', maxWidth: '800px', lineHeight: '1.4' }}>
+              Based on Yotov, Y. V., Piermartini, R., Monteiro, J.-A., & Larch, M. (2016). An Advanced Guide to Trade Policy Analysis: The Structural Gravity Model. UNCTAD–WTO. Chapter 1 ("Partial Equilibrium").
+            </p>
           </div>
         </div>
       </div>

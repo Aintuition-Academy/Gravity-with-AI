@@ -45,9 +45,16 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 2 }, (_, i) => ({
-      id: i + 7,
-      title: `Module ${i + 7}: Coming Soon`,
+    {
+      id: 7,
+      title: "Module 7: General Equilibrium Structural Gravity",
+      description: "Perform counterfactual analysis: conditional vs. full general equilibrium, dynamic capital accumulation gravity, normalisation-free indexes, GEPPML loops, Trade Without Borders, and NAFTA models.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 1 }, (_, i) => ({
+      id: i + 8,
+      title: `Module ${i + 8}: Coming Soon`,
       description: "This module is under development and will be added later.",
       active: false,
       status: "Coming Soon"

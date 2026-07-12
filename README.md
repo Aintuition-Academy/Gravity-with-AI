@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, and **Module 6: The Structural Gravity Model**.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, **Module 6: The Structural Gravity Model**, and **Module 7: General Equilibrium Structural Gravity**.
 
 ---
 
@@ -333,11 +333,63 @@ Module 6 covers structural gravity: Armington and Eaton-Kortum derivations, inwa
 #### Submodule 6.13: Comprehensive Final Exam
 - 15-question multiple-choice final exam verifying trade data estimations and structural gravity theory.
 
+### Module 7: General Equilibrium Structural Gravity
+
+Module 7 covers general equilibrium counterfactuals, dynamic growth considerations, normalization-dependent/free indexes, GEPPML estimation algorithms, and empirical applications (Trade Without Borders and NAFTA).
+
+#### Submodule 7.1: The GE Gravity System & Six Properties of the Multilateral Resistances
+- The five core equations of the GE gravity system
+- Krugman's Mars remoteness logic and properties of the multilateral resistances
+- Normalization requirements and degrees of freedom
+
+#### Submodule 7.2: Three Channels: Partial, Conditional GE, and Full Endowment GE
+- Defining and differentiating the three channels of policy feedback
+- Interactive network ripple effects and trade creation/diversion transmission
+
+#### Submodule 7.3: Nesting Gravity Inside a Dynamic Growth Model
+- Household optimization, production with capital, and capital accumulation dynamics
+- Two new growth feedback loops: price effects and resistance indexes
+- Simulated dynamic capital-accumulation responses to trade shocks
+
+#### Submodule 7.4: GE Indexes That Require Normalization
+- Inward and outward multilateral resistances as access indicators
+- Disconnecting inward MR from headline Consumer Price Index (CPI)
+
+#### Submodule 7.5: GE Indexes Independent of Normalization (CTB, Terms of Trade, ACR Welfare)
+- Constructed Trade Bias (CTB) properties
+- Exporter-to-importer price terms of trade
+- The Arkolakis-Costinot-Rodríguez-Clare sufficient-statistics welfare gain formula
+
+#### Submodule 7.6: The Standard Five-Step Approach
+- Baseline solve, calibration vs estimation vs estibration hybrid
+- Defining counterfactual policy shocks and solving MR systems
+- Bootstrap confidence intervals for counterfactual outcomes
+
+#### Submodule 7.7: GEPPML: Baseline and Conditional GE via PPML Fixed Effects
+- Equivalence of estimated PPML fixed effects and multilateral resistance terms
+- Two-stage Anderson-Yotov regression for missing trade-cost values
+- Re-estimating baseline matrices under locked policy coefficients
+
+#### Submodule 7.8: GEPPML: The Full Endowment GE Iterative Loop
+- The four-stage GEPPML loop (price, size, re-estimation, convergence check)
+- Convergence algorithms mapping price fluctuations to zero
+
+#### Submodule 7.9: Application: Trade Without Borders
+- Setting all international borders to zero in a global trade matrix
+- Comparing export responses and real GDP gains across large and small countries
+
+#### Submodule 7.10: Application: NAFTA in General Equilibrium
+- Recreating Table 4 simulation outcomes (exports and GDP shifts)
+- Magnitude differences between members and outsiders (first-order vs second-order effects)
+
+#### Submodule 7.11: Comprehensive Final Exam
+- 15-question multiple-choice final exam verifying GE estimations and structural gravity theory.
+
 ---
 
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, and 6 are currently active:
+The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, 6, and 7 are currently active:
 
 | Module | Status |
 |---|---|
@@ -347,7 +399,7 @@ The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, and 6 are current
 | Module 4: Monopolistic Competition and Heterogeneous Firms | ✅ Active |
 | Module 5: Trade Policy and Welfare | ✅ Active |
 | Module 6: The Structural Gravity Model | ✅ Active |
-| Module 7 | 🔒 Coming Soon |
+| Module 7: General Equilibrium Structural Gravity | ✅ Active |
 | Module 8 | 🔒 Coming Soon |
 
 ---

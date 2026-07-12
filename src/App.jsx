@@ -39,6 +39,7 @@ import Module3 from './components/Module3';
 import Module4 from './components/Module4';
 import Module5 from './components/Module5';
 import Module6 from './components/Module6';
+import Module7 from './components/Module7';
 import PPFGraph from './components/PPFGraph';
 import SpecializationPanel from './components/SpecializationPanel';
 import CPFGraph from './components/CPFGraph';
@@ -142,6 +143,8 @@ export default function App() {
       setActiveTab('module5');
     } else if (moduleId === 6) {
       setActiveTab('module6');
+    } else if (moduleId === 7) {
+      setActiveTab('module7');
     } else {
       setActiveTab('module1');
       setModuleTab('theory1');
@@ -995,6 +998,12 @@ export default function App() {
       {activeTab === 'module6' && (
         <ErrorBoundary moduleName="Module 6">
           <Module6 theme={theme} setActiveTab={setActiveTab} />
+        </ErrorBoundary>
+      )}
+
+      {activeTab === 'module7' && (
+        <ErrorBoundary moduleName="Module 7">
+          <Module7 theme={theme} setActiveTab={setActiveTab} />
         </ErrorBoundary>
       )}
 
