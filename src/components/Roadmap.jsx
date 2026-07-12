@@ -38,9 +38,16 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 3 }, (_, i) => ({
-      id: i + 6,
-      title: `Module ${i + 6}: Coming Soon`,
+    {
+      id: 6,
+      title: "Module 6: The Structural Gravity Model",
+      description: "Master structural gravity: Armington and Eaton-Kortum derivations, inward/outward multilateral resistances, estimation challenges (PPML, zeros, heteroscedasticity, RTAs, endogeneity), the distance puzzle, and RTA effects.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 2 }, (_, i) => ({
+      id: i + 7,
+      title: `Module ${i + 7}: Coming Soon`,
       description: "This module is under development and will be added later.",
       active: false,
       status: "Coming Soon"

@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, and **Module 5: Trade Policy and Welfare**.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, and **Module 6: The Structural Gravity Model**.
 
 ---
 
@@ -269,11 +269,75 @@ Module 5 covers the economics, game theory, and political-economy structures of 
 #### Submodule 5.7: Comprehensive Final Exam
 - 16-question final assessment tracing mathematical proofs and economic policy intuitions.
 
+### Module 6: The Structural Gravity Model
+
+Module 6 covers structural gravity: Armington and Eaton-Kortum derivations, inward/outward multilateral resistances, estimation challenges, the distance puzzle, and RTA effects.
+
+#### Submodule 6.1: The Gravity Analogy & the Evolution of Gravity Theory
+- Newton's law mapped onto trade flows
+- The atheoretical curve-fit era (Tinbergen)
+- The theoretical lineage (Anderson/AvW/Eaton-Kortum/ACR) and isomorphism
+
+#### Submodule 6.2: Deriving Structural Gravity from the Demand Side
+- The Armington-CES environment and iceberg costs
+- Bilateral demand and the CES price index
+- Closing the model via market clearing: inward and outward multilateral resistance
+
+#### Submodule 6.3: Size vs. Trade Costs & the Eaton-Kortum Supply-Side Derivation
+- Decomposing gravity: size vs. trade costs
+- Ricardian/Fréchet supply-side derivation (θ replacing 1-σ)
+- Structural equivalence of demand and supply-side derivations
+
+#### Submodule 6.4: Estimation Challenges 1–3: Multilateral Resistances, Zeros, and Heteroscedasticity
+- The "Gold Medal Mistake" (omitting MR)
+- Four solutions to unobserved MR terms: directional fixed effects as the modern standard
+- The zero-trade-flows problem and PPML
+- Why PPML solves the heteroscedasticity and Jensen's inequality inconsistency
+
+#### Submodule 6.5: Estimation Challenges 4–8: Trade Costs, Endogeneity, and Non-Discriminatory Policy
+- Specifying bilateral trade costs and recovering σ
+- The pair-fixed-effects solution to policy endogeneity
+- The intra-national-trade trick for non-discriminatory policy
+- Lags (interval panels) and sectoral separability
+
+#### Submodule 6.6: The Comprehensive, Theory-Consistent Estimating Equation
+- Assembling all recommendations into the generic specification
+- The dual statistical and econometric role of pair fixed effects
+
+#### Submodule 6.7: Interpreting Gravity Estimates: Trade Volumes and Tariff Equivalents
+- Continuous elasticities vs. indicator trade-volume effects
+- Backing out tariff equivalents using only an external σ
+
+#### Submodule 6.8: Consistent Aggregation of Bilateral Trade Costs
+- The volume-equivalent uniform trade cost bCU(i)
+- Importer/exporter fixed effects as aggregation weights
+
+#### Submodule 6.9: Gravity Data: Sources, Coverage, and Limitations
+- Aggregate and merchandise datasets (DOTS, COMTRADE, BACI)
+- Mirroring, value added, and intra-national trade data construction
+- Geography and tariff databases (GeoDist, WITS)
+
+#### Submodule 6.10: Traditional Gravity Estimates: OLS, Remoteness, Fixed Effects, PPML
+- The four-specification horse race (Table 1)
+- Multilateral resistance bias and Ramsey RESET misspecification tests
+
+#### Submodule 6.11: The Distance Puzzle Resolved
+- Disdier and Head's puzzle: persistent distance effects
+- Yotov's resolution using intra-national trade as the internal benchmark (Table 2)
+- Home-bias dummy interpretation
+
+#### Submodule 6.12: RTA Effects: Endogeneity, Phasing, and Globalization
+- The six successive RTA specifications (Table 3)
+- Strict exogeneity tests (RTA lead) and time-varying border controls
+
+#### Submodule 6.13: Comprehensive Final Exam
+- 15-question multiple-choice final exam verifying trade data estimations and structural gravity theory.
+
 ---
 
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1, 2, 3, 4, and 5 are currently active:
+The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, and 6 are currently active:
 
 | Module | Status |
 |---|---|
@@ -282,7 +346,7 @@ The full course contains **8 modules**. Modules 1, 2, 3, 4, and 5 are currently 
 | Module 3: GRAVITY with Gravitas | ✅ Active |
 | Module 4: Monopolistic Competition and Heterogeneous Firms | ✅ Active |
 | Module 5: Trade Policy and Welfare | ✅ Active |
-| Module 6 | 🔒 Coming Soon |
+| Module 6: The Structural Gravity Model | ✅ Active |
 | Module 7 | 🔒 Coming Soon |
 | Module 8 | 🔒 Coming Soon |
 
