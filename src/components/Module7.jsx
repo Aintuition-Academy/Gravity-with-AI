@@ -720,6 +720,53 @@ export default function Module7({ theme, setActiveTab }) {
 
   const [naftaFilter, setNaftaFilter] = useState("all"); // all, member, nonmember
 
+  // ──────────────────────────────────────────────────────────────────────
+  // FINAL EXAM STATES
+  // ──────────────────────────────────────────────────────────────────────
+  const [currentExamIdx, setCurrentExamIdx] = useState(0);
+  const [selectedExamOpt, setSelectedExamOpt] = useState(null);
+  const [examSubmitted, setExamSubmitted] = useState(false);
+  const [examScore, setExamScore] = useState(0);
+  const [showExamResults, setShowExamResults] = useState(false);
+  const [examAnswers, setExamAnswers] = useState({});
+
+  const handleExamOptionClick = (optIdx) => {
+    if (examSubmitted) return;
+    setSelectedExamOpt(optIdx);
+  };
+
+  const handleExamSubmit = () => {
+    if (selectedExamOpt === null || examSubmitted) return;
+    const isCorrect = selectedExamOpt === finalQuestions[currentExamIdx].correctIndex;
+    setExamAnswers(prev => ({
+      ...prev,
+      [currentExamIdx]: { selected: selectedExamOpt, correct: isCorrect }
+    }));
+    if (isCorrect) {
+      setExamScore(prev => prev + 1);
+    }
+    setExamSubmitted(true);
+  };
+
+  const handleExamNext = () => {
+    if (currentExamIdx < finalQuestions.length - 1) {
+      setCurrentExamIdx(prev => prev + 1);
+      setSelectedExamOpt(null);
+      setExamSubmitted(false);
+    } else {
+      setShowExamResults(true);
+    }
+  };
+
+  const handleExamRestart = () => {
+    setCurrentExamIdx(0);
+    setSelectedExamOpt(null);
+    setExamSubmitted(false);
+    setExamScore(0);
+    setShowExamResults(false);
+    setExamAnswers({});
+  };
+
   const filteredNafta = naftaData.filter(d => {
     if (naftaFilter === "member") return d.isMember;
     if (naftaFilter === "nonmember") return !d.isMember;
