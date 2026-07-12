@@ -36,7 +36,7 @@ export default function Hero({ onStartModule }) {
         
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto 24px auto' }}>
-            Our curriculum covers <strong>Module 1: Trade and Technology</strong>, <strong>Module 2: Trade and Resources</strong>, and <strong>Module 3: GRAVITY with Gravitas</strong> — with more modules coming soon.
+            Our curriculum covers <strong>Module 1: Trade and Technology</strong>, <strong>Module 2: Trade and Resources</strong>, <strong>Module 3: GRAVITY with Gravitas</strong>, <strong>Module 4: Monopolistic Competition & Heterogeneous Firms</strong>, and <strong>Module 5: Trade Policy & Welfare</strong>.
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => onStartModule(1)} className="hero-btn">
@@ -49,6 +49,14 @@ export default function Hero({ onStartModule }) {
             </button>
             <button onClick={() => onStartModule(3)} className="hero-btn" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)' }}>
               <span>Module 3</span>
+              <ArrowRight size={18} />
+            </button>
+            <button onClick={() => onStartModule(4)} className="hero-btn" style={{ background: 'linear-gradient(135deg, #a855f7 0%, #db2777 100%)' }}>
+              <span>Module 4</span>
+              <ArrowRight size={18} />
+            </button>
+            <button onClick={() => onStartModule(5)} className="hero-btn" style={{ background: 'linear-gradient(135deg, #db2777 0%, #f43f5e 100%)' }}>
+              <span>Module 5</span>
               <ArrowRight size={18} />
             </button>
           </div>

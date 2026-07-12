@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, and **Module 4: Monopolistic Competition and Heterogeneous Firms**.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, and **Module 5: Trade Policy and Welfare**.
 
 ---
 
@@ -224,11 +224,56 @@ Module 4 introduces firm heterogeneity and monopolistic competition. It covers K
 - Bilateral access fees and entry masses
 - Chaney's margin decomposition (Intensive vs. Extensive margins)
 
+### Module 5: Trade Policy and Welfare
+
+Module 5 covers the economics, game theory, and political-economy structures of trade policy, tariffs, quotas, subsidies, and lobbies.
+
+#### Submodule 5.1: Partial-Equilibrium Trade Policy
+- Small country welfare decomposition: consumer surplus, producer surplus, and deadweight losses ($b + d$)
+- Hump-shaped tariff Laffer curve and prohibitive tariff bounds
+- Large country terms-of-trade (TOT) extraction rectangle ($e$)
+- Johnson's optimal tariff formula $t_{opt} = 1/\epsilon^*$
+- Import quotas, license allocation rents, and the failure of tariff-quota equivalence under domestic monopoly
+
+#### Submodule 5.2: Domestic Market Power & the Second Best
+- Import competition as a monopolist disciplining/regulation tool
+- Tariff price ceilings vs. quota residual demand curves
+- Game-theoretic Nash equilibrium stability (determinant $\Delta > 0$)
+- Strategic complements vs. substitutes (cross-partial sign $\pi_{ij}$)
+- Cramer's rule comparative statics system and the Envelope Theorem
+
+#### Submodule 5.3: Cournot Duopoly Model of Strategic Trade Policy
+- Cournot best-response functions and cost shock transmission
+- Symmetric cost benchmarks and the U-shaped joint profit curve
+- Quasilinear national welfare: consumer surplus, producer profits, and tariff revenues
+- First-order consumer loss vs. second-order profit shifting: why the marginal tariff at free trade is welfare-reducing ($dU = -X_2 dt$)
+
+#### Submodule 5.4: Optimum Tariffs, Retaliation & Country Size
+- Non-cooperative Johnson retaliation game and Nash equilibria
+- Mayer's Pareto-efficient locus $t + t^* + tt^* = 0$
+- Cooperative settlements along the negotiable contract curve
+- Syropoulos relative size primitives ($\lambda_i$) and tariff-war winning thresholds
+
+#### Submodule 5.5: Strategic Trade Policy Under Imperfect Competition
+- Rent extraction from a foreign monopolist and the Brander-Spencer demand convexity sign condition ($R \gtrless -1$)
+- Committing to export subsidies: Stackelberg quantity leader replication
+- Exporter subsidy war Prisoner's Dilemma
+- Bertrand price competition: why the strategic policy recommendation flips to an export tax
+
+#### Submodule 5.6: Political Economy of Trade Policy
+- Mayer's endogenous tariff majority voting and median voter theorem
+- Right-skewed asset ownership and labor-protection bias
+- Costly voting and concentrated benefits vs. diffuse costs ($B_{gg} > -B_{hg}$)
+- Grossman-Helpman Protection for Sale lobbying game: Ramsey-type organized vs. unorganized tariff slopes
+
+#### Submodule 5.7: Comprehensive Final Exam
+- 16-question final assessment tracing mathematical proofs and economic policy intuitions.
+
 ---
 
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1, 2, 3, and 4 are currently active:
+The full course contains **8 modules**. Modules 1, 2, 3, 4, and 5 are currently active:
 
 | Module | Status |
 |---|---|
@@ -236,7 +281,7 @@ The full course contains **8 modules**. Modules 1, 2, 3, and 4 are currently act
 | Module 2: Trade and Resources | ✅ Active |
 | Module 3: GRAVITY with Gravitas | ✅ Active |
 | Module 4: Monopolistic Competition and Heterogeneous Firms | ✅ Active |
-| Module 5 | 🔒 Coming Soon |
+| Module 5: Trade Policy and Welfare | ✅ Active |
 | Module 6 | 🔒 Coming Soon |
 | Module 7 | 🔒 Coming Soon |
 | Module 8 | 🔒 Coming Soon |

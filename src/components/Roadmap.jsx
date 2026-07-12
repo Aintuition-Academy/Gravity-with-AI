@@ -31,9 +31,16 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 4 }, (_, i) => ({
-      id: i + 5,
-      title: `Module ${i + 5}: Coming Soon`,
+    {
+      id: 5,
+      title: "Module 5: Trade Policy & Welfare",
+      description: "Examine the welfare effects of trade interventions: tariffs, quotas, terms-of-trade gains, strategic export subsidies, duopoly profit shifting, retaliation wars, and political-economy models of protection.",
+      active: true,
+      status: "Active"
+    },
+    ...Array.from({ length: 3 }, (_, i) => ({
+      id: i + 6,
+      title: `Module ${i + 6}: Coming Soon`,
       description: "This module is under development and will be added later.",
       active: false,
       status: "Coming Soon"
