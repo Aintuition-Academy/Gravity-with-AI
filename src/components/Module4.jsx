@@ -227,7 +227,22 @@ export default function Module4({ theme, setActiveTab }) {
   const extensivePct = (extensiveMargin / totalElasticity) * 100;
 
   return (
-    <div className="module4-container">
+    <div className="container module4-container" style={{ padding: '40px 24px' }}>
+      {/* Header */}
+      <div className="module-header">
+        <button onClick={() => setActiveTab('home')} className="back-btn">
+          <span>← Back to Course Path</span>
+        </button>
+        <div className="module-title-row">
+          <div>
+            <span style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Module 4
+            </span>
+            <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>Monopolistic Competition &amp; Heterogeneous Firms</h2>
+          </div>
+        </div>
+      </div>
+
       {/* Horizontal tab-based stepper header */}
       <div className="tabs-header">
         <button 

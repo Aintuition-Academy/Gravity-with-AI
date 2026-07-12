@@ -855,15 +855,20 @@ export default function Module5({ theme, setActiveTab }) {
   ];
 
   return (
-    <div className="module5-container">
-      {/* Module Title */}
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-          Module 5: Trade Policy and Welfare
-        </h2>
-        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginTop: '8px', maxWidth: '800px', margin: '8px auto 0 auto' }}>
-          Explore the strategic, competitive, and political-economy drivers of trade interventions.
-        </p>
+    <div className="container module5-container" style={{ padding: '40px 24px' }}>
+      {/* Header */}
+      <div className="module-header">
+        <button onClick={() => setActiveTab('home')} className="back-btn">
+          <span>← Back to Course Path</span>
+        </button>
+        <div className="module-title-row">
+          <div>
+            <span style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Module 5
+            </span>
+            <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>Trade Policy &amp; Welfare</h2>
+          </div>
+        </div>
       </div>
 
       {/* Tabs Header */}
