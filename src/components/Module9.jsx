@@ -349,6 +349,16 @@ function LessonQuiz({ title, questions }) {
 }
 
 export default function Module9({ theme, setActiveTab }) {
+  const tabsList = [
+    ["9.1 — Guns & Butter", "9.1 Guns & Butter"],
+    ["9.2 — Insecure Property", "9.2 Insecure Property"],
+    ["9.3 — Trade & Resource GE", "9.3 GE Resources"],
+    ["9.4 — Enemies & Friends", "9.4 Enemies & Friends"],
+    ["9.5 — War, Peace & Commitment", "9.5 War & Commitment"],
+    ["9.6 — Prudence & Predation", "9.6 Prudence & Predation"],
+    ["9.7 — Frontier Research", "9.7 Synthesis Frontier"],
+    ["9.8 — Final Exam", "9.8 Final Exam"]
+  ];
   const [moduleTab, setModuleTab] = useState("9.1 — Guns & Butter");
 
   // 9.1 Interactive state
@@ -553,16 +563,7 @@ export default function Module9({ theme, setActiveTab }) {
 
       {/* ── Tabs Navigation ── */}
       <div className="module-sections-nav" style={{ overflowX: 'auto', marginBottom: '2rem' }}>
-        {[
-          ["9.1 — Guns & Butter", "9.1 Guns & Butter"],
-          ["9.2 — Insecure Property", "9.2 Insecure Property"],
-          ["9.3 — Trade & Resource GE", "9.3 GE Resources"],
-          ["9.4 — Enemies & Friends", "9.4 Enemies & Friends"],
-          ["9.5 — War, Peace & Commitment", "9.5 War & Commitment"],
-          ["9.6 — Prudence & Predation", "9.6 Prudence & Predation"],
-          ["9.7 — Frontier Research", "9.7 Synthesis Frontier"],
-          ["9.8 — Final Exam", "9.8 Final Exam"]
-        ].map(([keyName, label]) => (
+        {tabsList.map(([keyName, label]) => (
           <button 
             key={keyName} 
             className={`tab-btn ${moduleTab === keyName ? 'active' : ''}`} 
@@ -1723,6 +1724,44 @@ export default function Module9({ theme, setActiveTab }) {
           </div>
         </div>
       )}
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "You've completed the course 🎉";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            {isExamTab ? (
+              <div className="hero-btn" style={{ background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', cursor: 'default', boxShadow: '0 4px 20px rgba(34, 197, 94, 0.3)' }}>
+                <span>{label}</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="hero-btn"
+              >
+                <span>{label}</span>
+                <ArrowRight size={18} />
+              </button>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

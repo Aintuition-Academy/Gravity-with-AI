@@ -549,6 +549,19 @@ const finalQuestions = [
 ];
 
 export default function Module7({ theme, setActiveTab }) {
+  const tabsList = [
+    ["7.1 — GE Gravity System", "7.1 GE System & MRs"],
+    ["7.2 — Three Channels", "7.2 Three GE Channels"],
+    ["7.3 — Dynamic Growth Model", "7.3 Dynamic Growth"],
+    ["7.4 — Normalization Indexes", "7.4 Normalization Indexes"],
+    ["7.5 — Normalization-Free", "7.5 Normalization-Free"],
+    ["7.6 — Five-Step Approach", "7.6 Five-Step Wizard"],
+    ["7.7 — GEPPML Baseline/Cond", "7.7 GEPPML FE Shifting"],
+    ["7.8 — GEPPML Full GE Loop", "7.8 GEPPML GE Loop"],
+    ["7.9 — Trade Without Borders", "7.9 Trade Without Borders"],
+    ["7.10 — NAFTA", "7.10 NAFTA application"],
+    ["7.11 — Final Exam", "7.11 Final Exam"]
+  ];
   const [moduleTab, setModuleTab] = useState("7.1 — GE Gravity System");
   const [activeMathStep, setActiveMathStep] = useState(1);
 
@@ -796,19 +809,7 @@ export default function Module7({ theme, setActiveTab }) {
 
       {/* ── Tabs Navigation ── */}
       <div className="module-sections-nav" style={{ overflowX: 'auto', marginBottom: '2rem' }}>
-        {[
-          ["7.1 — GE Gravity System", "7.1 GE System & MRs"],
-          ["7.2 — Three Channels", "7.2 Three GE Channels"],
-          ["7.3 — Dynamic Growth Model", "7.3 Dynamic Growth"],
-          ["7.4 — Normalization Indexes", "7.4 Normalization Indexes"],
-          ["7.5 — Normalization-Free", "7.5 Normalization-Free"],
-          ["7.6 — Five-Step Approach", "7.6 Five-Step Wizard"],
-          ["7.7 — GEPPML Baseline/Cond", "7.7 GEPPML FE Shifting"],
-          ["7.8 — GEPPML Full GE Loop", "7.8 GEPPML GE Loop"],
-          ["7.9 — Trade Without Borders", "7.9 Trade Without Borders"],
-          ["7.10 — NAFTA", "7.10 NAFTA application"],
-          ["7.11 — Final Exam", "7.11 Final Exam"]
-        ].map(([keyName, label]) => (
+        {tabsList.map(([keyName, label]) => (
           <button 
             key={keyName} 
             className={`tab-btn ${moduleTab === keyName ? 'active' : ''}`} 
@@ -2079,6 +2080,42 @@ export default function Module7({ theme, setActiveTab }) {
           )}
         </div>
       )}
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "Next Module: Trade, Climate Change, and Agricultural/Environmental Economics";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                } else {
+                  setActiveTab('module8');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

@@ -474,6 +474,21 @@ const finalQuestions = [
 ];
 
 export default function Module6({ theme, setActiveTab }) {
+  const tabsList = [
+    ["6.1 — Gravity Analogy", "6.1 Gravity Analogy"],
+    ["6.2 — Demand Derivation", "6.2 Demand Derivation"],
+    ["6.3 — EK Ricardian Derivation", "6.3 EK Derivation"],
+    ["6.4 — Estimation Challenges 1–3", "6.4 Challenges 1-3"],
+    ["6.5 — Estimation Challenges 4–8", "6.5 Challenges 4-8"],
+    ["6.6 — Estimating Equation", "6.6 PPML Equation"],
+    ["6.7 — Interpreting Estimates", "6.7 Interpret Estimates"],
+    ["6.8 — Aggregating Costs", "6.8 Aggregating Costs"],
+    ["6.9 — Gravity Data", "6.9 Gravity Data"],
+    ["6.10 — Table 1 Horse Race", "6.10 Table 1 Horse Race"],
+    ["6.11 — The Distance Puzzle", "6.11 Distance Puzzle"],
+    ["6.12 — RTA Specifications", "6.12 RTA Effects"],
+    ["6.13 — Final Exam", "6.13 Final Exam"]
+  ];
   const [moduleTab, setModuleTab] = useState("6.1 — Gravity Analogy");
   const [activeMathStep, setActiveMathStep] = useState(1);
 
@@ -715,21 +730,7 @@ export default function Module6({ theme, setActiveTab }) {
 
       {/* ── Tabs Navigation ── */}
       <div className="module-sections-nav" style={{ overflowX: 'auto', marginBottom: '2rem' }}>
-        {[
-          ["6.1 — Gravity Analogy", "6.1 Gravity Analogy"],
-          ["6.2 — Demand Derivation", "6.2 Demand Derivation"],
-          ["6.3 — EK Ricardian Derivation", "6.3 Ricardian Derivation"],
-          ["6.4 — Estimation Challenges 1–3", "6.4 MR, Zeros & PPML"],
-          ["6.5 — Estimation Challenges 4–8", "6.5 Policy & Lags"],
-          ["6.6 — Estimating Equation", "6.6 Comprehensive Estimator"],
-          ["6.7 — Interpreting Estimates", "6.7 Tariff Equivalents"],
-          ["6.8 — Aggregating Costs", "6.8 Aggregate Costs"],
-          ["6.9 — Gravity Data", "6.9 Gravity Data"],
-          ["6.10 — Table 1 Horse Race", "6.10 Horse Race"],
-          ["6.11 — The Distance Puzzle", "6.11 Distance Puzzle"],
-          ["6.12 — RTA Specifications", "6.12 RTA Effects"],
-          ["6.13 — Final Exam", "6.13 Final Exam"]
-        ].map(([keyName, label]) => (
+        {tabsList.map(([keyName, label]) => (
           <button 
             key={keyName} 
             className={`tab-btn ${moduleTab === keyName ? 'active' : ''}`} 
@@ -1897,6 +1898,42 @@ export default function Module6({ theme, setActiveTab }) {
           )}
         </div>
       )}
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "Next Module: General Equilibrium Structural Gravity";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                } else {
+                  setActiveTab('module7');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

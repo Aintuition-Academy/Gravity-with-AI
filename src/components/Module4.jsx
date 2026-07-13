@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Module4.css';
 import TutorTip from './TutorTip';
 import Module4Quiz from './Module4Quiz';
-import { BookOpen, Lightbulb } from 'lucide-react';
+import { BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
 function DefinitionBox({ title, children }) {
   return (
@@ -41,6 +41,14 @@ function IntuitionBox({ title, children }) {
 }
 
 export default function Module4({ theme, setActiveTab }) {
+  const tabsList = [
+    "4.1 Krugman 1979: Variable Markups",
+    "4.2 Krugman 1980: CES & Gravity",
+    "4.3 Melitz Model: Closed Economy",
+    "4.4 Melitz Model: Open Economy",
+    "4.5 Melitz-Pareto: Distorted Gravity",
+    "4.6 Module 4 Final Exam"
+  ];
   const [moduleTab, setModuleTab] = useState("4.1 Krugman 1979: Variable Markups");
   const [activeMathStep, setActiveMathStep] = useState(1);
 
@@ -1418,6 +1426,43 @@ export default function Module4({ theme, setActiveTab }) {
       {/* TAB 4.6: FINAL EXAM */}
       {/* ======================================================== */}
       {moduleTab === "4.6 Module 4 Final Exam" && <Module4Quiz />}
+
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.indexOf(moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "Next Module: Trade Policy & Welfare";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1].split(': ')[1] || tabsList[currentTabIdx + 1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  handleTabChange(tabsList[currentTabIdx + 1]);
+                } else {
+                  setActiveTab('module5');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

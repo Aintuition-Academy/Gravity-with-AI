@@ -336,6 +336,15 @@ function LessonQuiz({ title, questions }) {
    ════════════════════════════════════════════════════════════════════════ */
 
 export default function Module5({ theme, setActiveTab }) {
+  const tabsList = [
+    ["5.1 — Partial-Equilibrium Trade Policy", "5.1 Partial Equilibrium"],
+    ["5.2 — Domestic Market Power & the Second Best", "5.2 Second Best"],
+    ["5.3 — Cournot Duopoly Model of Strategic Trade Policy", "5.3 Strategic Cournot"],
+    ["5.4 — Optimum Tariffs, Retaliation & Country Size", "5.4 Tariffs & Size"],
+    ["5.5 — Strategic Trade Policy Under Imperfect Competition", "5.5 Imperfect Comp"],
+    ["5.6 — Political Economy of Trade Policy", "5.6 Political Economy"],
+    ["5.7 — Final Exam", "5.7 Final Exam"]
+  ];
   const [moduleTab, setModuleTab] = useState("5.1 — Partial-Equilibrium Trade Policy");
   const [activeMathStep, setActiveMathStep] = useState(1);
 
@@ -873,15 +882,7 @@ export default function Module5({ theme, setActiveTab }) {
 
       {/* Tabs Header */}
       <div className="module-sections-nav" style={{ overflowX: 'auto' }}>
-        {[
-          ["5.1 — Partial-Equilibrium Trade Policy", "5.1 Partial-Equilibrium Trade Policy"],
-          ["5.2 — Domestic Market Power & the Second Best", "5.2 Domestic Monopoly & Second Best"],
-          ["5.3 — Cournot Duopoly Model of Strategic Trade Policy", "5.3 Cournot Duopoly Model"],
-          ["5.4 — Optimum Tariffs, Retaliation & Country Size", "5.4 Retaliation & Country Size"],
-          ["5.5 — Strategic Trade Policy Under Imperfect Competition", "5.5 Strategic Export Policy"],
-          ["5.6 — Political Economy of Trade Policy", "5.6 Political Economy"],
-          ["5.7 — Final Exam", "5.7 Final Exam"]
-        ].map(([keyName, label]) => {
+        {tabsList.map(([keyName, label]) => {
           return (
             <button 
               key={keyName} 
@@ -3258,6 +3259,43 @@ export default function Module5({ theme, setActiveTab }) {
       {moduleTab === "5.7 — Final Exam" && (
         <Module5Quiz />
       )}
+
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "Next Module: The Structural Gravity Model";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                } else {
+                  setActiveTab('module6');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

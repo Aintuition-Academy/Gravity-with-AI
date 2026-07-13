@@ -51,7 +51,7 @@ import ComparativeStaticsGraph from './components/ComparativeStaticsGraph';
 import GainsFromTradeGraph from './components/GainsFromTradeGraph';
 import Module1Section3 from './components/Module1Section3';
 import Module1Section4 from './components/Module1Section4';
-import { HelpCircle, RefreshCw, Sparkles, BookOpen, Layers, CheckCircle2, XCircle } from 'lucide-react';
+import { HelpCircle, RefreshCw, Sparkles, BookOpen, Layers, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home'); // 'home', 'module1', or 'module2'
@@ -971,6 +971,38 @@ export default function App() {
               <Quiz />
             </div>
           )}
+
+          {/* Next Lesson Navigation Button */}
+          {(() => {
+            const m1Tabs = [
+              { key: 'theory1', nextKey: 'theory2', label: 'Next Lesson: DFS Continuum Model' },
+              { key: 'theory2', nextKey: 'theory3', label: 'Next Lesson: Probabilistic Ideas & The Fréchet Frontier' },
+              { key: 'theory3', nextKey: 'theory4', label: 'Next Lesson: Integrating EK & DFS' },
+              { key: 'theory4', nextKey: 'quiz', label: 'Take the Final Quiz' },
+              { key: 'quiz', nextKey: null, label: 'Next Module: Trade and Resources' }
+            ];
+            const currentTab = m1Tabs.find(t => t.key === moduleTab);
+            if (!currentTab) return null;
+
+            return (
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+                <button
+                  onClick={() => {
+                    if (currentTab.nextKey) {
+                      setModuleTab(currentTab.nextKey);
+                    } else {
+                      setActiveTab('module2');
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hero-btn"
+                >
+                  <span>{currentTab.label}</span>
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            );
+          })()}
 
         </div>
       )}

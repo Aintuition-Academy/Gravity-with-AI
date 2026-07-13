@@ -2,8 +2,19 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Plotly from 'plotly.js-dist-min';
 import TutorTip from './TutorTip';
 import Module3Quiz from './Module3Quiz';
+import { ArrowRight } from 'lucide-react';
 
 export default function Module3({ theme, setActiveTab }) {
+  const tabsList = [
+    ['sub1', '3.1 Basic Gravity'],
+    ['sub2', '3.2 Structural Gravity'],
+    ['sub3', '3.3 Armington Model'],
+    ['sub4', '3.4 General Equilibrium'],
+    ['sub5', '3.5 Numerical Simulation'],
+    ['sub6', '3.6 Hat Algebra'],
+    ['sub7', '3.7 Gains from Trade'],
+    ['quiz', 'Final Quiz']
+  ];
   const [moduleTab, setModuleTab] = useState('sub1');
 
   // --- Theme helper colors ---
@@ -1063,16 +1074,7 @@ export default function Module3({ theme, setActiveTab }) {
 
       {/* ── Submodule Navigation ── */}
       <div className="module-sections-nav" style={{ overflowX: 'auto' }}>
-        {[
-          ['sub1', '3.1 Basic Gravity'],
-          ['sub2', '3.2 Structural Gravity'],
-          ['sub3', '3.3 Armington Model'],
-          ['sub4', '3.4 General Equilibrium'],
-          ['sub5', '3.5 Numerical Simulation'],
-          ['sub6', '3.6 Hat Algebra'],
-          ['sub7', '3.7 Gains from Trade'],
-          ['quiz', 'Final Quiz'],
-        ].map(([key, label]) => (
+        {tabsList.map(([key, label]) => (
           <button key={key} onClick={() => setModuleTab(key)}
             className={`tab-btn ${moduleTab === key ? 'active' : ''}`}>
             {label}
@@ -2501,6 +2503,42 @@ export default function Module3({ theme, setActiveTab }) {
         <Module3Quiz />
       )}
 
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Quiz";
+        } else if (isExamTab) {
+          label = "Next Module: Monopolistic Competition & Heterogeneous Firms";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1].split(' ').slice(1).join(' ')}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                } else {
+                  setActiveTab('module4');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

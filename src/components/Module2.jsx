@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import TutorTip from './TutorTip';
 import Module2Quiz from './Module2Quiz';
-import { RefreshCw, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import { RefreshCw, CheckCircle2, XCircle, Sparkles, ArrowRight } from 'lucide-react';
 import Plotly from 'plotly.js-dist-min';
 
 /* ─── tiny helper: render a Plotly chart into a div ref ─── */
@@ -1337,6 +1337,42 @@ export default function Module2({ theme, setActiveTab }) {
           <Module2Quiz />
         </div>
       )}
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabs.findIndex(t => t.key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabs.length - 2; // last lesson tab before quiz
+        const isExamTab = currentTabIdx === tabs.length - 1; // quiz tab
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Module 2 Quiz";
+        } else if (isExamTab) {
+          label = "Next Module: GRAVITY with Gravitas";
+        } else {
+          label = `Next Lesson: ${tabs[currentTabIdx + 1].label.split(' ').slice(1).join(' ')}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabs[currentTabIdx + 1].key);
+                } else {
+                  setActiveTab('module3');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }

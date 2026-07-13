@@ -672,6 +672,21 @@ const finalQuestions = [
 ];
 
 export default function Module8({ theme, setActiveTab }) {
+  const tabsList = [
+    ["8.1 — Fréchet Yields", "8.1 Fréchet Yields"],
+    ["8.2 — Welfare Consequences", "8.2 Welfare Costs"],
+    ["8.3 — Input Patterns", "8.3 Input Patterns & PPF"],
+    ["8.4 — Gains Decomp", "8.4 Gains & Globalization"],
+    ["8.5 — Growth facts", "8.5 Growth & Reallocation"],
+    ["8.6 — Price vs Income", "8.6 Price vs Income Trade"],
+    ["8.7 — Roy Selection", "8.7 Roy Selection Model"],
+    ["8.8 — Amplification Gaps", "8.8 Amplification Gaps"],
+    ["8.9 — Policy & Heat Shocks", "8.9 Policy & Shocks"],
+    ["8.10 — Political Economy", "8.10 Political Economy"],
+    ["8.11 — Non-Homothetic EK", "8.11 Non-Homothetic EK"],
+    ["8.12 — Food Problem", "8.12 Food Problem Condition"],
+    ["8.13 — Final Exam", "8.13 Final Exam"]
+  ];
   const [moduleTab, setModuleTab] = useState("8.1 — Fréchet Yields");
 
   useEffect(() => {
@@ -854,21 +869,7 @@ export default function Module8({ theme, setActiveTab }) {
 
       {/* ── Tabs Navigation ── */}
       <div className="module-sections-nav" style={{ overflowX: 'auto', marginBottom: '2rem' }}>
-        {[
-          ["8.1 — Fréchet Yields", "8.1 Fréchet Yields"],
-          ["8.2 — Welfare Consequences", "8.2 Welfare Costs"],
-          ["8.3 — Input Patterns", "8.3 Input Patterns & PPF"],
-          ["8.4 — Gains Decomp", "8.4 Gains & Globalization"],
-          ["8.5 — Growth facts", "8.5 Growth & Reallocation"],
-          ["8.6 — Price vs Income", "8.6 Price vs Income Trade"],
-          ["8.7 — Roy Selection", "8.7 Roy Selection Model"],
-          ["8.8 — Amplification Gaps", "8.8 Amplification Gaps"],
-          ["8.9 — Policy & Heat Shocks", "8.9 Policy & Shocks"],
-          ["8.10 — Political Economy", "8.10 Political Economy"],
-          ["8.11 — Non-Homothetic EK", "8.11 Non-Homothetic EK"],
-          ["8.12 — Food Problem", "8.12 Food Problem Condition"],
-          ["8.13 — Final Exam", "8.13 Final Exam"]
-        ].map(([keyName, label]) => (
+        {tabsList.map(([keyName, label]) => (
           <button 
             key={keyName} 
             className={`tab-btn ${moduleTab === keyName ? 'active' : ''}`} 
@@ -2674,6 +2675,42 @@ export default function Module8({ theme, setActiveTab }) {
           )}
         </div>
       )}
+      {/* Next Lesson Navigation Button */}
+      {(() => {
+        const currentTabIdx = tabsList.findIndex(([key]) => key === moduleTab);
+        if (currentTabIdx === -1) return null;
+        
+        const isLastLesson = currentTabIdx === tabsList.length - 2;
+        const isExamTab = currentTabIdx === tabsList.length - 1;
+        
+        let label = "Next Lesson";
+        if (isLastLesson) {
+          label = "Take the Final Exam";
+        } else if (isExamTab) {
+          label = "Next Module: Trade, Conflict, and Security Economics";
+        } else {
+          label = `Next Lesson: ${tabsList[currentTabIdx + 1][1]}`;
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
+            <button
+              onClick={() => {
+                if (!isExamTab) {
+                  setModuleTab(tabsList[currentTabIdx + 1][0]);
+                } else {
+                  setActiveTab('module9');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hero-btn"
+            >
+              <span>{label}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }
