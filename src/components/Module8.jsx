@@ -845,12 +845,9 @@ export default function Module8({ theme, setActiveTab }) {
         <div className="module-title-row">
           <div>
             <span style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Module 8 (Part V of the Trade Theory Companion Series)
+              Module 8
             </span>
             <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>Trade, Climate Change, and Agricultural/Environmental Economics</h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '6px', fontStyle: 'italic', maxWidth: '800px', lineHeight: '1.4' }}>
-              Note: This is Part V of the "Trade Theory Companion Series" study-note collection, synthesizing six independent papers.
-            </p>
           </div>
         </div>
       </div>
