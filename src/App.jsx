@@ -40,6 +40,7 @@ import Module4 from './components/Module4';
 import Module5 from './components/Module5';
 import Module6 from './components/Module6';
 import Module7 from './components/Module7';
+import Module8 from './components/Module8';
 import PPFGraph from './components/PPFGraph';
 import SpecializationPanel from './components/SpecializationPanel';
 import CPFGraph from './components/CPFGraph';
@@ -1004,6 +1005,12 @@ export default function App() {
       {activeTab === 'module7' && (
         <ErrorBoundary moduleName="Module 7">
           <Module7 theme={theme} setActiveTab={setActiveTab} />
+        </ErrorBoundary>
+      )}
+
+      {activeTab === 'module8' && (
+        <ErrorBoundary moduleName="Module 8">
+          <Module8 theme={theme} setActiveTab={setActiveTab} />
         </ErrorBoundary>
       )}
 

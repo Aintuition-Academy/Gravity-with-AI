@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, **Module 6: The Structural Gravity Model**, and **Module 7: General Equilibrium Structural Gravity**.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, **Module 6: The Structural Gravity Model**, **Module 7: General Equilibrium Structural Gravity**, and **Module 8: Trade, Climate Change, and Agricultural/Environmental Economics**.
 
 ---
 
@@ -385,11 +385,67 @@ Module 7 covers general equilibrium counterfactuals, dynamic growth consideratio
 #### Submodule 7.11: Comprehensive Final Exam
 - 15-question multiple-choice final exam verifying GE estimations and structural gravity theory.
 
+### Module 8: Trade, Climate Change, and Agricultural/Environmental Economics
+
+Module 8 covers Ricardian agricultural sorting under warming climate constraints, technology adoption using imported input margins, structural transformation Euler growth aggregates, selection effects in wage and productivity differences, endogenous political tariffs, and Eaton-Kortum general equilibrium food problem conditions.
+
+#### Submodule 8.1: Climate Change, Comparative Advantage, and the Fréchet Model of Field-Level Yields
+- Two margins of adaptation (crop switching and source switching)
+- FAO-GAEZ agro-climatic potential yield metrics
+- Roy-Fréchet plot sorting and land-share derivations
+
+#### Submodule 8.2: Estimating Demand and Fréchet Supply Parameters, and the Welfare Cost of Climate Change
+- Instrumented nested demand regressions and supply parameter NLS identification
+- Climate welfare losses across three counterfactual adjustment boundaries
+
+#### Submodule 8.3: Four Empirical Patterns and the Technology-Adoption Model
+- Cost shares, imported machinery intensity, and remoteness barriers
+- Curved nested technology PPF bounds
+
+#### Submodule 8.4: Gains from Trade, Estimation, and Globalization Counterfactuals
+- Multiplicative ACR-FP gains decomposition
+- Input-only vs. output-only globalization welfare patterns
+
+#### Submodule 8.5: Stylized Facts and the Benchmark Multi-Sector Growth Model
+- Structural transformation measures (employment, value-added, expenditures)
+- Multi-sector aggregate growth paths and generalized balanced growth paths (GBGP)
+
+#### Submodule 8.6: Income vs. Price Mechanisms, and the Role of International Trade
+- Non-homothetic income effects vs productivity relative-price effects
+- Decoupling of production shares and final expenditure shares under trade
+
+#### Submodule 8.7: The Puzzle and the Roy Model of Sectoral Selection
+- Cross-country productivity gap differentials (45x agriculture vs. 4x non-agriculture)
+- Stone-Geary subsistence Roy sorting
+
+#### Submodule 8.8: Amplification, Fréchet Quantification, and Results
+- Selection amplification under positive sorting
+- Expected capability changes on sorting limits
+
+#### Submodule 8.9: Measuring Policy and Heat Exposure, and the Core Empirical Pattern
+- Nominal Rate of Assistance (NRA) distortions
+- Domestic vs. foreign heat shocks shifting trade policy directions
+
+#### Submodule 8.10: A Political-Economy Model of Trade Policy, and Welfare
+- Optimal government ad-valorem policy interventions
+- Redistribution vs. revenue-seeking border effects
+
+#### Submodule 8.11: Three Facts and the Non-Homothetic CES + Eaton-Kortum Model
+- Agriculture heat sensitivity
+- Budgets and utility under non-homothetic CES implicit structures
+
+#### Submodule 8.12: The Food Problem Condition, Calibration, and Counterfactuals
+- Food problem conditions and open economy corollaries
+- Sectoral reallocation feedbacks under global warming
+
+#### Submodule 8.13: Comprehensive Final Exam
+- 22-question multiple-choice final exam verifying trade, climate change, and environmental economics theories.
+
 ---
 
 ## Course Roadmap
 
-The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, 6, and 7 are currently active:
+The full course contains **8 modules**. All 8 modules are currently active:
 
 | Module | Status |
 |---|---|
@@ -400,7 +456,7 @@ The full course contains **8 modules**. Modules 1, 2, 3, 4, 5, 6, and 7 are curr
 | Module 5: Trade Policy and Welfare | ✅ Active |
 | Module 6: The Structural Gravity Model | ✅ Active |
 | Module 7: General Equilibrium Structural Gravity | ✅ Active |
-| Module 8 | 🔒 Coming Soon |
+| Module 8: Trade, Climate Change, and Agricultural/Environmental Economics | ✅ Active |
 
 ---
 

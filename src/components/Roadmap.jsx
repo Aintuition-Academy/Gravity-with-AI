@@ -52,13 +52,13 @@ export default function Roadmap({ onSelectModule }) {
       active: true,
       status: "Active"
     },
-    ...Array.from({ length: 1 }, (_, i) => ({
-      id: i + 8,
-      title: `Module ${i + 8}: Coming Soon`,
-      description: "This module is under development and will be added later.",
-      active: false,
-      status: "Coming Soon"
-    }))
+    {
+      id: 8,
+      title: "Module 8: Trade, Climate Change, and Agricultural/Environmental Economics",
+      description: "Explore the Ricardian comparative advantage under climate change, technology adoption with imported inputs, structural transformation growth paths, Roy worker selection models, endogenous agricultural trade policies, and the sectoral food problem condition.",
+      active: true,
+      status: "Active"
+    }
   ];
 
   return (
