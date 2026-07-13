@@ -58,6 +58,13 @@ export default function Roadmap({ onSelectModule }) {
       description: "Explore the Ricardian comparative advantage under climate change, technology adoption with imported inputs, structural transformation growth paths, Roy worker selection models, endogenous agricultural trade policies, and the sectoral food problem condition.",
       active: true,
       status: "Active"
+    },
+    {
+      id: 9,
+      title: "Module 9: Trade, Conflict, and Security Economics",
+      description: "Examine trade under anarchy: guns-vs-butter models, the contest success function, Limited Settlement vs. Exchange, Heckscher-Ohlin general equilibrium resources, trade with enemies and friends, dynamic commitment problems, war as commitment, and technology transfer blocks.",
+      active: true,
+      status: "Active"
     }
   ];
 

@@ -1,6 +1,6 @@
 # Gravity with AI
 
-Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition and Heterogeneous Firms**, **Module 5: Trade Policy and Welfare**, **Module 6: The Structural Gravity Model**, **Module 7: General Equilibrium Structural Gravity**, and **Module 8: Trade, Climate Change, and Agricultural/Environmental Economics**.
+Gravity with AI is a professional, interactive educational website designed for learning international trade theory. The course currently covers **Module 1: Trade and Technology**, **Module 2: Trade and Resources**, **Module 3: GRAVITY with Gravitas**, **Module 4: Monopolistic Competition & Heterogeneous Firms**, **Module 5: Trade Policy & Welfare**, **Module 6: The Structural Gravity Model**, **Module 7: General Equilibrium Structural Gravity**, **Module 8: Trade, Climate Change, and Agricultural/Environmental Economics**, and **Module 9: Trade, Conflict, and Security Economics**.
 
 ---
 
@@ -441,11 +441,46 @@ Module 8 covers Ricardian agricultural sorting under warming climate constraints
 #### Submodule 8.13: Comprehensive Final Exam
 - 22-question multiple-choice final exam verifying trade, climate change, and environmental economics theories.
 
+### Module 9: Trade, Conflict, and Security Economics
+
+Module 9 covers guns-vs-butter resource conflicts, ex-post tradeability and ex-ante arming incentives, neoclassical general equilibrium trade in insecure resources, large-country terms-of-trade discipline under arming, war as a dynamic commitment device, dynamic portfolios of prudence vs predation, and technology transfer blocks.
+
+#### Submodule 9.1: Guns, Butter, and Openness
+- Trade's level playing field: equalizing opportunity cost of guns
+- Liberal peace dividend vs. realist security externality regions
+
+#### Submodule 9.2: Insecure Property and the Efficiency of Exchange
+- Jensen's inequality and concavity of production: settlement dominance
+- Limited Settlement vs. Exchange: entire surplus bargaining and ex-ante inefficiency
+
+#### Submodule 9.3: Trade and Insecure Resources, General Equilibrium
+- stolper-Samuelson opportunity cost pricing under conflict
+- Commodity price booms as domestic conflict shocks (GSS 2008 resource curse)
+
+#### Submodule 9.4: Arming in the Global Economy: Trade with Enemies and Friends
+- Terms-of-trade discipline for large adversaries
+- Friend-shoring loopholes and bilateral militarization shifts
+
+#### Submodule 9.5: War, Peace, and Commitment
+- War as a costly dynamic commitment device
+- Self-enforcing status-quo agreements and resource distribution limits
+
+#### Submodule 9.6: Prudence versus Predation and the Gains from Trade
+- Predatory arming of poor countries vs. prudent investment of rich rivals
+- Intertemporal wealth redistribution and endogenous trade refusal
+
+#### Submodule 9.7: The Frontier: War-and-Peace Dynamics, Technology, and Sanctions
+- Armed peace stability conditions and technology transfer trap models
+- Sanctions as endogenous strategic instruments in interstate contests
+
+#### Submodule 9.8: Comprehensive Final Exam
+- 10-question multiple-choice final exam verifying trade, conflict, and security economics theories.
+
 ---
 
 ## Course Roadmap
 
-The full course contains **8 modules**. All 8 modules are currently active:
+The full course contains **9 modules**. All 9 modules are currently active:
 
 | Module | Status |
 |---|---|
@@ -457,6 +492,7 @@ The full course contains **8 modules**. All 8 modules are currently active:
 | Module 6: The Structural Gravity Model | ✅ Active |
 | Module 7: General Equilibrium Structural Gravity | ✅ Active |
 | Module 8: Trade, Climate Change, and Agricultural/Environmental Economics | ✅ Active |
+| Module 9: Trade, Conflict, and Security Economics | ✅ Active |
 
 ---
 

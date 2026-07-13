@@ -13,7 +13,8 @@ export default function Navbar({ activeTab, setActiveTab, theme, toggleTheme }) 
     { id: 'module5', name: 'Module 5: Trade Policy & Welfare' },
     { id: 'module6', name: 'Module 6: The Structural Gravity Model' },
     { id: 'module7', name: 'Module 7: General Equilibrium Structural Gravity' },
-    { id: 'module8', name: 'Module 8: Trade, Climate Change, and Agricultural/Environmental Economics' }
+    { id: 'module8', name: 'Module 8: Trade, Climate Change, and Agricultural/Environmental Economics' },
+    { id: 'module9', name: 'Module 9: Trade, Conflict, and Security Economics' }
   ];
 
   // Close dropdown if clicking outside
