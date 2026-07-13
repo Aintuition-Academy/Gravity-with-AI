@@ -169,7 +169,7 @@ export default function App() {
       )}
 
       {activeTab === 'module1' && (
-        <div className="container" style={{ padding: '40px 24px' }}>
+        <div className="container module1-container" style={{ padding: '40px 24px' }}>
           
           {/* Header */}
           <div className="module-header">

@@ -176,7 +176,7 @@ export default function Module2({ theme, setActiveTab }) {
   };
 
   return (
-    <div className="container" style={{ padding: '40px 24px' }}>
+    <div className="container module2-container" style={{ padding: '40px 24px' }}>
       {/* Header */}
       <div className="module-header">
         <button onClick={() => setActiveTab('home')} className="back-btn">

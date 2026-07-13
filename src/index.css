@@ -1104,3 +1104,115 @@ footer {
     align-items: flex-start;
   }
 }
+
+/* ==========================================================================
+   ACADEMIC UNDERSTATED ACCENT PALETTES FOR MODULES 1 TO 9
+   ========================================================================== */
+
+/* ── Module 1: Slate Blue / Indigo ── */
+.module1-container {
+  --accent-primary: #5c6bc0;
+  --accent-secondary: #3f51b5;
+  --accent-primary-hover: #3949ab;
+}
+.light-theme .module1-container {
+  --accent-primary: #3f51b5;
+  --accent-secondary: #283593;
+  --accent-primary-hover: #303f9f;
+}
+
+/* ── Module 2: Muted Amethyst / Purple ── */
+.module2-container {
+  --accent-primary: #7e57c2;
+  --accent-secondary: #5e35b1;
+  --accent-primary-hover: #673ab7;
+}
+.light-theme .module2-container {
+  --accent-primary: #5e35b1;
+  --accent-secondary: #4527a0;
+  --accent-primary-hover: #512da8;
+}
+
+/* ── Module 3: Muted Steel Blue ── */
+.module3-container {
+  --accent-primary: #4682b4;
+  --accent-secondary: #295e8a;
+  --accent-primary-hover: #356b9c;
+}
+.light-theme .module3-container {
+  --accent-primary: #295e8a;
+  --accent-secondary: #1a446c;
+  --accent-primary-hover: #22517d;
+}
+
+/* ── Module 4: Slate Teal / Petrol ── */
+.module4-container {
+  --accent-primary: #0f766e;
+  --accent-secondary: #115e59;
+  --accent-primary-hover: #134e4a;
+}
+.light-theme .module4-container {
+  --accent-primary: #115e59;
+  --accent-secondary: #134e4a;
+  --accent-primary-hover: #115e59;
+}
+
+/* ── Module 5: Muted Burgundy / Rose ── */
+.module5-container {
+  --accent-primary: #be123c;
+  --accent-secondary: #9f1239;
+  --accent-primary-hover: #881337;
+}
+.light-theme .module5-container {
+  --accent-primary: #9f1239;
+  --accent-secondary: #881337;
+  --accent-primary-hover: #9f1239;
+}
+
+/* ── Module 6: Dark Sage / Muted Green ── */
+.module6-container {
+  --accent-primary: #047857;
+  --accent-secondary: #065f46;
+  --accent-primary-hover: #064e3b;
+}
+.light-theme .module6-container {
+  --accent-primary: #065f46;
+  --accent-secondary: #064e3b;
+  --accent-primary-hover: #065f46;
+}
+
+/* ── Module 7: Muted Forest Green ── */
+.module7-container {
+  --accent-primary: #15803d;
+  --accent-secondary: #166534;
+  --accent-primary-hover: #14532d;
+}
+.light-theme .module7-container {
+  --accent-primary: #166534;
+  --accent-secondary: #14532d;
+  --accent-primary-hover: #166534;
+}
+
+/* ── Module 8: Muted Terracotta / Redwood ── */
+.module8-container {
+  --accent-primary: #b91c1c;
+  --accent-secondary: #991b1b;
+  --accent-primary-hover: #7f1d1d;
+}
+.light-theme .module8-container {
+  --accent-primary: #991b1b;
+  --accent-secondary: #7f1d1d;
+  --accent-primary-hover: #991b1b;
+}
+
+/* ── Module 9: Muted Amber / Ochre ── */
+.module9-container {
+  --accent-primary: #c2410c;
+  --accent-secondary: #9a3412;
+  --accent-primary-hover: #7c2d12;
+}
+.light-theme .module9-container {
+  --accent-primary: #9a3412;
+  --accent-secondary: #7c2d12;
+  --accent-primary-hover: #9a3412;
+}

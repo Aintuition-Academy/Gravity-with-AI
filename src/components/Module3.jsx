@@ -571,7 +571,7 @@ export default function Module3({ theme, setActiveTab }) {
         y: tradePredLine,
         mode: 'lines',
         name: 'Predicted Trade',
-        line: { color: '#7c3aed', width: 3 },
+        line: { color: '#4682b4', width: 3 },
         hovertemplate: '<b>Distance:</b> %{x} km<br><b>Trade Index:</b> %{y:.1f}<extra></extra>'
       };
 
@@ -602,7 +602,7 @@ export default function Module3({ theme, setActiveTab }) {
         x: sizeGDPs.map(s => s.label),
         y: sizeVals,
         type: 'bar',
-        marker: { color: ['#94a3b8', '#3b82f6', '#3b82f6', '#7c3aed'], opacity: 0.85 },
+        marker: { color: ['#94a3b8', '#3b82f6', '#3b82f6', '#4682b4'], opacity: 0.85 },
         hovertemplate: '<b>%{x}</b><br>Trade Index: %{y:.0f}<extra></extra>'
       };
 
@@ -629,7 +629,7 @@ export default function Module3({ theme, setActiveTab }) {
         y: iceShipLine,
         mode: 'lines',
         name: 'Requirement',
-        line: { color: '#7c3aed', width: 2.5 },
+        line: { color: '#4682b4', width: 2.5 },
         hovertemplate: '<b>d_ij:</b> %{x:.2f}<br><b>Units to Ship:</b> %{y:.2f}<extra></extra>'
       };
 
@@ -662,7 +662,7 @@ export default function Module3({ theme, setActiveTab }) {
         x: ['Home variety', 'Foreign variety'],
         y: [Number(cesShareH), Number(cesShareF)],
         type: 'bar',
-        marker: { color: ['#3b82f6', '#7c3aed'], opacity: 0.85 },
+        marker: { color: ['#3b82f6', '#4682b4'], opacity: 0.85 },
         hovertemplate: '<b>%{x}</b><br>Spending share: %{y:.1f}%<extra></extra>'
       };
 
@@ -685,7 +685,7 @@ export default function Module3({ theme, setActiveTab }) {
         x: ['Home', 'Foreign', 'Rest of World'],
         y: [Number(tsPi1), Number(tsPi2), Number(tsPi3)],
         type: 'bar',
-        marker: { color: ['#3b82f6', '#7c3aed', '#10b981'], opacity: 0.85 },
+        marker: { color: ['#3b82f6', '#4682b4', '#10b981'], opacity: 0.85 },
         hovertemplate: '<b>%{x}</b><br>Trade share: %{y:.1f}%<extra></extra>'
       };
 
@@ -720,7 +720,7 @@ export default function Module3({ theme, setActiveTab }) {
         y: wIterHistory.map(r => Number(r.w2)),
         mode: 'lines+markers',
         name: 'Foreign wage w₂',
-        line: { color: '#7c3aed', width: 2.5 },
+        line: { color: '#4682b4', width: 2.5 },
         marker: { size: 6 },
         hovertemplate: 'Iter %{x}<br>w₂ = %{y:.4f}<extra></extra>'
       };
@@ -769,7 +769,7 @@ export default function Module3({ theme, setActiveTab }) {
         y: wIterHistory.map(r => Number(r.ratio2)),
         mode: 'lines+markers',
         name: 'Foreign Demand/Supply Ratio',
-        line: { color: '#7c3aed', width: 2 },
+        line: { color: '#4682b4', width: 2 },
         marker: { size: 5 },
         hovertemplate: 'Iter %{x}<br>Foreign D/S: %{y:.4f}<extra></extra>'
       };
@@ -961,7 +961,7 @@ export default function Module3({ theme, setActiveTab }) {
         x: ['Home Price Index P̂_H', 'Foreign Price Index P̂_F'],
         y: [(psPhatH - 1) * 100, (psPhatF - 1) * 100],
         type: 'bar',
-        marker: { color: ['#3b82f6', '#7c3aed'], opacity: 0.85 },
+        marker: { color: ['#3b82f6', '#4682b4'], opacity: 0.85 },
         hovertemplate: '<b>%{x}</b><br>Price Index Change: %{y:.2f}%<extra></extra>'
       };
 
@@ -1012,7 +1012,7 @@ export default function Module3({ theme, setActiveTab }) {
         y: gftCurve,
         mode: 'lines',
         name: 'GFT curve',
-        line: { color: '#7c3aed', width: 3 },
+        line: { color: '#4682b4', width: 3 },
         hovertemplate: 'π_nn = %{x:.2f}<br>GFT = %{y:.2f}%<extra></extra>'
       };
 
@@ -1055,7 +1055,7 @@ export default function Module3({ theme, setActiveTab }) {
   const noticeBox = { padding: '14px 18px', borderRadius: '8px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.2)', fontSize: '0.9rem', marginTop: '14px' };
 
   return (
-    <div className="container" style={{ padding: '40px 24px' }}>
+    <div className="container module3-container" style={{ padding: '40px 24px' }}>
 
       {/* ── Header ── */}
       <div className="module-header">
@@ -1064,7 +1064,7 @@ export default function Module3({ theme, setActiveTab }) {
         </button>
         <div className="module-title-row">
           <div>
-            <span style={{ color: '#7c3aed', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Module 3
             </span>
             <h2 style={{ fontSize: '2.25rem', marginTop: '4px' }}>GRAVITY with Gravitas</h2>
@@ -1086,8 +1086,8 @@ export default function Module3({ theme, setActiveTab }) {
       {moduleTab === 'sub1' && (
         <div>
           {/* Opening Intro */}
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Why Gravity Matters</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Why Gravity Matters</h3>
             <p>
               How do we explain actual trade flows? 
               <strong> Module 1: Trade and Technology</strong> taught us how technological differences generate comparative advantage (classical trade theory).
@@ -1320,8 +1320,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.2: From Naive Gravity to Structural Gravity ════ */}
       {moduleTab === 'sub2' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.2: From Naive Gravity to Structural Gravity</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.2: From Naive Gravity to Structural Gravity</h3>
             <p>
               Naive gravity is useful but theoretically incomplete. Bilateral trade between two countries depends on their options relative to the rest of the world.
             </p>
@@ -1421,8 +1421,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.3: Armington Model Foundation ══════════════════ */}
       {moduleTab === 'sub3' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.3: Armington Model Foundation</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.3: Armington Model Foundation</h3>
             <p>
               The Armington model provides a clean microfoundation for structural gravity using origin-differentiated goods and CES consumer demand.
             </p>
@@ -1694,8 +1694,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.4: General Equilibrium in the Armington Model ══ */}
       {moduleTab === 'sub4' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.4: General Equilibrium in the Armington Model</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.4: General Equilibrium in the Armington Model</h3>
             <p>
               In GE, wages adjust to clear labor markets worldwide.
             </p>
@@ -1766,8 +1766,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.5: Numerical Simulation and Newton's Method ═══ */}
       {moduleTab === 'sub5' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.5: Numerical Simulation and Newton's Method</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.5: Numerical Simulation and Newton's Method</h3>
             <p>
               Solving general equilibrium models requires numerical root-finding algorithms when analytical solutions are not possible.
             </p>
@@ -2135,8 +2135,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.6: Exact Hat Algebra ═══════════════════════════ */}
       {moduleTab === 'sub6' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.6: Exact Hat Algebra</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.6: Exact Hat Algebra</h3>
             <p>
               Exact Hat Algebra allows economists to simulate policy changes using baseline trade shares without estimating all model levels.
             </p>
@@ -2436,8 +2436,8 @@ export default function Module3({ theme, setActiveTab }) {
       {/* ═══ SUBMODULE 3.7: Gains from Trade in Gravity ══════════════════ */}
       {moduleTab === 'sub7' && (
         <div>
-          <div className="lesson-card" style={{ borderLeft: '4px solid #7c3aed' }}>
-            <h3 style={{ color: '#7c3aed' }}>Submodule 3.7: Gains from Trade in Gravity</h3>
+          <div className="lesson-card" style={{ borderLeft: '4px solid var(--accent-primary)' }}>
+            <h3 style={{ color: 'var(--accent-primary)' }}>Submodule 3.7: Gains from Trade in Gravity</h3>
             <p>
               The welfare benefits of trade can be measured using simple sufficient statistics.
             </p>

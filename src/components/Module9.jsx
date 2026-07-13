@@ -696,8 +696,8 @@ export default function Module9({ theme, setActiveTab }) {
                 <text x={50 + ((0.45 - 0.10) / 1.1) * 330} y="192" fill="#f59e0b" fontSize="8" textAnchor="middle">p^A (0.45)</text>
 
                 {/* Lower price threshold */}
-                <line x1={50 + ((0.27 - 0.10) / 1.1) * 330} y1="20" x2={50 + ((0.27 - 0.10) / 1.1) * 330} y2="180" stroke="#ea580c" strokeDasharray="3 3" />
-                <text x={50 + ((0.27 - 0.10) / 1.1) * 330} y="192" fill="#ea580c" fontSize="8" textAnchor="middle">p̃ (0.27)</text>
+                <line x1={50 + ((0.27 - 0.10) / 1.1) * 330} y1="20" x2={50 + ((0.27 - 0.10) / 1.1) * 330} y2="180" stroke="#9a3412" strokeDasharray="3 3" />
+                <text x={50 + ((0.27 - 0.10) / 1.1) * 330} y="192" fill="#9a3412" fontSize="8" textAnchor="middle">p̃ (0.27)</text>
 
                 {/* Autarky constant welfare line */}
                 <line x1="50" y1="110" x2="380" y2="110" stroke="#94a3b8" strokeDasharray="4 4" />
@@ -726,7 +726,7 @@ export default function Module9({ theme, setActiveTab }) {
                   const markerX = 50 + ((price91 - 0.10) / 1.1) * 330;
                   const markerY = 180 - (currentV - 10) * 15;
                   return (
-                    <circle cx={markerX} cy={markerY} r="6" fill="#f97316" stroke="#fff" strokeWidth="1.5" />
+                    <circle cx={markerX} cy={markerY} r="6" fill="#c2410c" stroke="#fff" strokeWidth="1.5" />
                   );
                 })()}
 
@@ -881,10 +881,10 @@ export default function Module9({ theme, setActiveTab }) {
                   const cp1Y = 80 + lsShift;
                   const cp2X = 160 - lsShift;
                   return (
-                    <path d={`M 30 ${cp1Y} Q 100 ${cp1Y} ${cp2X} 190`} fill="none" stroke="#f97316" strokeWidth="2" />
+                    <path d={`M 30 ${cp1Y} Q 100 ${cp1Y} ${cp2X} 190`} fill="none" stroke="#c2410c" strokeWidth="2" />
                   );
                 })()}
-                <text x="110" y="125" fill="#f97316" fontSize="7">B1B2 (Ltd Settl.)</text>
+                <text x="110" y="125" fill="#c2410c" fontSize="7">B1B2 (Ltd Settl.)</text>
 
                 {/* Exchange Frontier (C1C2) */}
                 {(() => {

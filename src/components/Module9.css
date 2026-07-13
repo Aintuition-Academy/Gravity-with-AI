@@ -17,11 +17,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Accent primary and secondary overrides for Module 9: Orange/Amber theme representing warning/conflict */
-.module9-container {
-  --accent-primary: #f97316; /* Orange */
-  --accent-secondary: #ea580c; /* Deep Orange */
-}
 
 /* Stepper wizard layout */
 .stepper-header {

@@ -17,11 +17,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Accent primary and secondary overrides for Module 8: Rose/Red theme representing heat/climate */
-.module8-container {
-  --accent-primary: #f43f5e; /* Rose */
-  --accent-secondary: #e11d48; /* Red */
-}
 
 /* Stepper wizard layout */
 .stepper-header {
