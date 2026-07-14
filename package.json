@@ -12,6 +12,8 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@babel/parser": "^8.0.4",
+    "acorn": "^8.17.0",
     "lucide-react": "^0.475.0",
     "plotly.js-dist-min": "^3.0.0",
     "react": "^19.2.7",

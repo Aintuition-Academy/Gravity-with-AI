@@ -2864,7 +2864,7 @@ export default function Module5({ theme, setActiveTab }) {
               <div className="sliders-grid">
                 <div className="slider-card">
                   <label>
-                    <span>Bertrand Commitment ($t_{B}$):</span>
+                    <span>Bertrand Commitment ($t_B$):</span>
                     <span className="val-highlight">{bertrandSoft.toFixed(2)}</span>
                   </label>
                   <input 
